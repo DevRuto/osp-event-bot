@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model DiscordUser {
+  id            String   @id @default(uuid())
+  discordId     String   @unique
+  username      String
+  discriminator String?
+  avatar        String?
+  roles         String   // Stored as JSON string of role IDs
+  joinedAt      DateTime @default(now())
+  lastSeen      DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  teams         TeamMember[]
+  events        EventParticipant[]
+}
+
+model Event {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      String   @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  participants EventParticipant[]
+  teams        Team[]
+}
+
+model Team {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  members     TeamMember[]
+  events      Event[]
+}
+
+// Junction tables for many-to-many relationships
+model TeamMember {
+  id        String      @id @default(uuid())
+  userId    String
+  teamId    String
+  role      String      @default("MEMBER") // LEADER, MEMBER, etc.
+  joinedAt  DateTime    @default(now())
+  user      DiscordUser @relation(fields: [userId], references: [id])
+  team      Team        @relation(fields: [teamId], references: [id])
+
+  @@unique([userId, teamId])
+}
+
+model EventParticipant {
+  id        String      @id @default(uuid())
+  userId    String
+  eventId   String
+  status    String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
+  user      DiscordUser @relation(fields: [userId], references: [id])
+  event     Event       @relation(fields: [eventId], references: [id])
+
+  @@unique([userId, eventId])
+}
