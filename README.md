@@ -16,8 +16,11 @@
 3. Create a `.env` file in the root directory with:
    ```
    DISCORD_TOKEN=your_bot_token_here
+   CLIENT_ID=bot_application_id
+   GUILD_ID=discord_server_id
    ```
-4. Enable required Discord Intents:
+4. Run `node deploy_commands.js` to load slash commands into your discord server
+5. Enable required Discord Intents:
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
    - Select your application
    - Go to Bot section
