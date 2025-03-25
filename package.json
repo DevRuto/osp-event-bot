@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "A Discord bot for managing events",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
+    "start": "node ./src/index.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."
