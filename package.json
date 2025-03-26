@@ -4,6 +4,9 @@
   "description": "A Discord bot for managing events",
   "main": "index.js",
   "type": "module",
+  "imports": {
+    "@/*": "./src/*"
+  },
   "scripts": {
     "start": "node ./src/index.js",
     "lint": "eslint .",
