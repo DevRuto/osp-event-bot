@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
@@ -16,6 +16,9 @@ export const data = new SlashCommandBuilder()
     option.setName('attachment').setDescription('Attached image of item').setRequired(false)
   );
 
+/**
+ * @param {ChatInputCommandInteraction} interaction
+ */
 export async function execute(interaction) {
   const name = interaction.options.getString('name');
   const value = interaction.options.getString('value');
