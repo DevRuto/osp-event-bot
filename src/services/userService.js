@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import logger from '../logger.js';
 
 const prisma = new PrismaClient();
 
@@ -39,7 +40,7 @@ export class UserService {
         });
       }
     } catch (error) {
-      console.error(`Error syncing user ${member.user.tag}:`, error);
+      logger.error(`Error syncing user ${member.user.tag}:`, error);
       throw error;
     }
   }
@@ -51,14 +52,14 @@ export class UserService {
    */
   static async syncGuildMembers(guild) {
     try {
-      console.log(`Syncing members for guild: ${guild.name}`);
+      logger.info(`Syncing members for guild: ${guild.name}`);
       const members = await guild.members.fetch();
 
       for (const [, member] of members) {
         await this.syncUser(member);
       }
     } catch (error) {
-      console.error(`Error syncing guild ${guild.name}:`, error);
+      logger.error(`Error syncing guild ${guild.name}:`, error);
       throw error;
     }
   }
@@ -74,9 +75,9 @@ export class UserService {
       for (const [, guild] of guilds) {
         await this.syncGuildMembers(guild);
       }
-      console.log('Finished syncing all server members to database');
+      logger.info('Finished syncing all server members to database');
     } catch (error) {
-      console.error('Error syncing server members:', error);
+      logger.error('Error syncing server members:', error);
       throw error;
     }
   }
