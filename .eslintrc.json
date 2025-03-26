@@ -11,11 +11,13 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
+  "plugins": ["jsdoc"],
   "rules": {
     "no-console": "off",
     "prettier/prettier": "error",
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     "no-var": "error",
-    "prefer-const": "error"
+    "prefer-const": "error",
+    "jsdoc/no-undefined-types": 1
   }
-} 
+}
