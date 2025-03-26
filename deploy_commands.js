@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { REST, Routes } from 'discord.js';
 import fs from 'fs/promises';
 import path from 'path';
+import logger from './src/logger.js';
 
 const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
@@ -13,7 +14,7 @@ for await (const commandFile of commandFiles) {
     const relativeFile = `./${path.relative(baseDir, commandFile.parentPath)}/${commandFile.name}`;
     const command = await import(relativeFile);
     commands.push(command.data.toJSON());
-    console.log(`Loaded command: ${command.data.name} from ${relativeFile}`);
+    logger.info(`Loaded command: ${command.data.name} from ${relativeFile}`);
   }
 }
 
@@ -23,4 +24,4 @@ const data = await rest.put(
   Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID),
   { body: commands }
 );
-console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+logger.info(`Successfully reloaded ${data.length} application (/) commands.`);
