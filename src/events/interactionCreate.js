@@ -1,5 +1,5 @@
 import { Events, MessageFlags } from 'discord.js';
-import logger from '../utils/logger.js';
+import logger from '#utils/logger.js';
 
 export const name = Events.InteractionCreate;
 export async function execute(interaction) {

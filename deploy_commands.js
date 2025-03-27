@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { REST, Routes } from 'discord.js';
 import fs from 'fs/promises';
 import path from 'path';
-import logger from './src/utils/logger.js';
+import logger from '#utils/logger.js';
 
 const { DISCORD_TOKEN, CLIENT_ID, GUILD_ID } = process.env;
 
