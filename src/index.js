@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
 import fs from 'fs/promises';
 import path from 'path';
-import logger from './logger.js';
+import logger from './utils/logger.js';
 
 const client = new Client({
   intents: [
