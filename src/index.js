@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { Client, GatewayIntentBits, Collection } from 'discord.js';
 import fs from 'fs/promises';
 import path from 'path';
+import logger from '#utils/logger.js';
 
 const client = new Client({
   intents: [
@@ -22,9 +23,9 @@ for await (const commandFile of commandFiles) {
     const command = await import(relativeFile);
     if ('data' in command && 'execute' in command) {
       client.commands.set(command.data.name, command);
-      console.log(`Loaded command: ${command.data.name} from ${relativeFile}`);
+      logger.info(`Loaded command: ${command.data.name} from ${relativeFile}`);
     } else {
-      console.log(`Command file ${relativeFile} is missing data or execute function`);
+      logger.warn(`Command file ${relativeFile} is missing data or execute function`);
     }
   }
 }
@@ -36,10 +37,10 @@ for await (const eventFile of eventFiles) {
     const relativeFile = `./${path.relative(baseDir, eventFile.parentPath)}/${eventFile.name}`;
     const event = await import(relativeFile);
     if (event.once) {
-      console.log(`Loaded single event: ${event.name} from ${relativeFile}`);
+      logger.info(`Loaded single event: ${event.name} from ${relativeFile}`);
       client.once(event.name, (...args) => event.execute(...args));
     } else {
-      console.log(`Loaded event: ${event.name} from ${relativeFile}`);
+      logger.info(`Loaded event: ${event.name} from ${relativeFile}`);
       client.on(event.name, (...args) => event.execute(...args));
     }
   }

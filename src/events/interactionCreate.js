@@ -1,4 +1,5 @@
 import { Events, MessageFlags } from 'discord.js';
+import logger from '#utils/logger.js';
 
 export const name = Events.InteractionCreate;
 export async function execute(interaction) {
@@ -10,7 +11,7 @@ export async function execute(interaction) {
   try {
     await command.execute(interaction);
   } catch (error) {
-    console.error(error);
+    logger.error(error);
     await interaction.reply({
       content: 'There was an error while executing this command!',
       flags: MessageFlags.Ephemeral,

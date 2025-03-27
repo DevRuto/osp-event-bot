@@ -1,4 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
@@ -31,6 +32,6 @@ export async function execute(interaction) {
     return;
   }
 
-  console.log(`Item submitted: ${name} - ${value}`);
+  logger.info(`Item submitted: ${name} - ${value}`);
   await interaction.reply(`Item submitted: ${name} - ${value} - Proof type: ${proof}`);
 }
