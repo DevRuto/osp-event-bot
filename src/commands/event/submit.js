@@ -1,5 +1,5 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import logger from '../../logger.js';
+import logger from '../../utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
