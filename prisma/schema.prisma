@@ -23,6 +23,7 @@ model DiscordUser {
   teams         TeamMember[]
   events        EventParticipant[]
   teamsLed      Team[]      // Teams where this user is the leader
+  submissions   Submission[]
 }
 
 model Event {
@@ -38,6 +39,7 @@ model Event {
   // Relations
   participants EventParticipant[]
   teams        Team[]
+  submissions  Submission[]
 }
 
 model Team {
@@ -52,6 +54,7 @@ model Team {
   // Relations
   members     TeamMember[]
   events      Event[]
+  submissions Submission[]
 }
 
 // Junction tables for many-to-many relationships
@@ -76,4 +79,26 @@ model EventParticipant {
   event     Event       @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
+}
+
+model Submission {
+  id          String      @id @default(uuid())
+  name        String      // Name of the submitted item
+  value       String      // Value of the submitted item
+  proofUrl    String      // URL to the proof image
+  status      String      @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  userId      String      // ID of the user who submitted
+  eventId     String      // ID of the event this submission is for
+  teamId      String      // ID of the team this submission belongs to
+  user        DiscordUser @relation(fields: [userId], references: [id])
+  event       Event       @relation(fields: [eventId], references: [id])
+  team        Team        @relation(fields: [teamId], references: [id])
+
+  @@index([userId])
+  @@index([eventId])
+  @@index([teamId])
 }
