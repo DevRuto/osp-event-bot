@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
+import logger from '../src/utils/logger.js';
 
 const prisma = new PrismaClient();
 
@@ -122,12 +123,12 @@ async function main() {
     )
   );
 
-  console.log('Database seeded successfully!');
+  logger.info('Database seeded successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    logger.error('Error seeding database:', e);
     process.exit(1);
   })
   .finally(async () => {
