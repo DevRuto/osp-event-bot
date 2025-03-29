@@ -62,7 +62,7 @@ async function main() {
   // Create team members (ensuring no duplicates)
   for (const team of teams) {
     // Get available users (excluding the team leader)
-    const availableUsers = users.filter(user => user.id !== team.leaderId);
+    const availableUsers = users.filter((user) => user.id !== team.leaderId);
 
     // Randomly select 1-4 additional members
     const numMembers = faker.number.int({ min: 1, max: 4 });
@@ -70,7 +70,7 @@ async function main() {
 
     // Create team memberships
     await Promise.all(
-      selectedUsers.map(user =>
+      selectedUsers.map((user) =>
         prisma.teamMember.create({
           data: {
             userId: user.id,
@@ -90,7 +90,7 @@ async function main() {
     const selectedUsers = faker.helpers.arrayElements(users, numParticipants);
 
     await Promise.all(
-      selectedUsers.map(user =>
+      selectedUsers.map((user) =>
         prisma.eventParticipant.create({
           data: {
             userId: user.id,
@@ -101,7 +101,6 @@ async function main() {
       )
     );
   }
-
 
   await Promise.all(
     events.flatMap((event) =>
