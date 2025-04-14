@@ -102,3 +102,11 @@ model Submission {
   @@index([eventId])
   @@index([teamId])
 }
+
+model Config {
+  guild_id      String @id
+  setting_type  String
+  value         String
+
+  @@index([guild_id, setting_type])
+}
