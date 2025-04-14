@@ -104,9 +104,9 @@ model Submission {
 }
 
 model Config {
-  guild_id     String
-  setting_type String
-  value        String
+  guildId     String
+  settingType String
+  value       String
 
-  @@id([guild_id, setting_type])
+  @@id([guildId, settingType])
 }
