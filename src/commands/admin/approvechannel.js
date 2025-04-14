@@ -32,16 +32,18 @@ export async function execute(interaction) {
 
   // Check if user has admin permissions
   // Check custom role first
-  const customRole = await ConfigService.getAdminRole(interaction.guildId);
-  if (customRole) {
-    const member = await interaction.guild.members.fetch(interaction.user.id);
-    if (!member.roles.cache.has(customRole)) {
+  if (!interaction.member.permissions.has('Administrator')) {
+    const customRole = await ConfigService.getAdminRole(interaction.guildId);
+    if (customRole) {
+      const member = await interaction.guild.members.fetch(interaction.user.id);
+      if (!member.roles.cache.has(customRole)) {
+        await interaction.reply('You do not have permission to set the approval channel.');
+        return;
+      }
+    } else {
       await interaction.reply('You do not have permission to set the approval channel.');
       return;
     }
-  } else if (!interaction.member.permissions.has('Administrator')) {
-    await interaction.reply('You do not have permission to set the approval channel.');
-    return;
   }
 
   // if channel exists, set it as the approval channel
