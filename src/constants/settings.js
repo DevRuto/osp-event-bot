@@ -1,4 +1,4 @@
 export const SettingTypes = {
-  APPROVAL_CHANNEL: 'appproval_channel',
+  APPROVAL_CHANNEL: 'approval_channel',
   ADMIN_ROLE: 'admin_role',
 };

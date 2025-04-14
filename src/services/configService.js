@@ -11,7 +11,12 @@ export class ConfigService {
   static async getApprovalChannel(guildId) {
     try {
       const config = await prisma.config.findUnique({
-        where: { guildId, settingType: SettingTypes.APPROVAL_CHANNEL },
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.APPROVAL_CHANNEL,
+          },
+        },
       });
 
       return config?.value;
@@ -30,12 +35,22 @@ export class ConfigService {
   static async setApprovalChannel(guildId, channelId) {
     try {
       const existingConfig = await prisma.config.findUnique({
-        where: { guildId, settingType: SettingTypes.APPROVAL_CHANNEL },
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.APPROVAL_CHANNEL,
+          },
+        },
       });
 
       if (existingConfig) {
         await prisma.config.update({
-          where: { guildId, settingType: SettingTypes.APPROVAL_CHANNEL },
+          where: {
+            guildId_settingType: {
+              guildId,
+              settingType: SettingTypes.APPROVAL_CHANNEL,
+            },
+          },
           data: { value: channelId },
         });
       } else {
@@ -61,7 +76,12 @@ export class ConfigService {
   static async getAdminRole(guildId) {
     try {
       const config = await prisma.config.findUnique({
-        where: { guildId, settingType: SettingTypes.ADMIN_ROLE },
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.ADMIN_ROLE,
+          },
+        },
       });
 
       return config?.value;
@@ -80,12 +100,22 @@ export class ConfigService {
   static async setAdminRole(guildId, roleId) {
     try {
       const existingConfig = await prisma.config.findUnique({
-        where: { guildId, settingType: SettingTypes.ADMIN_ROLE },
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.ADMIN_ROLE,
+          },
+        },
       });
 
       if (existingConfig) {
         await prisma.config.update({
-          where: { guildId, settingType: SettingTypes.ADMIN_ROLE },
+          where: {
+            guildId_settingType: {
+              guildId,
+              settingType: SettingTypes.ADMIN_ROLE,
+            },
+          },
           data: { value: roleId },
         });
       } else {
