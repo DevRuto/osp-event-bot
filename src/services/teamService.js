@@ -138,4 +138,79 @@ export class TeamService {
       throw error;
     }
   }
+
+  /**
+   * Check if a user is in a team
+   * @param {String} userId - The discord Id of the user
+   */
+  static async isUserInTeam(userId) {
+    try {
+      const team = await prisma.team.findFirst({
+        where: {
+          members: {
+            some: {
+              user: {
+                discordId: userId,
+              },
+            },
+          },
+        },
+      });
+      return !!team;
+    } catch (error) {
+      logger.error('Error checking if user is in team', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Add a member to a team
+   * @param {String} teamId - The ID of the team
+   * @param {String} userId - The ID of the user
+   * @returns {Promise<void>}
+   */
+  static async addMemberToTeam(teamId, userId) {
+    try {
+      return await prisma.team.update({
+        where: {
+          id: teamId,
+        },
+        data: {
+          members: {
+            create: {
+              user: {
+                connect: {
+                  discordId: userId,
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      logger.error('Error adding member to team', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove member from all teams
+   * @param {String} userId - The ID of the user
+   * @returns {Promise<void>}
+   */
+  static async removeMemberFromAllTeams(userId) {
+    try {
+      await prisma.teamMember.deleteMany({
+        where: {
+          user: {
+            discordId: userId,
+          },
+        },
+      });
+    } catch (error) {
+      logger.error('Error removing member from all teams', error);
+      throw error;
+    }
+  }
 }
