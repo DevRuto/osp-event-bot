@@ -53,6 +53,7 @@ npm start
 
 - `/event` - Information for an event and teams
 - `/team` - Information for a team and members
+- `/register` - Register yourself to the event
 
 ## Event commands (for participants)
 
