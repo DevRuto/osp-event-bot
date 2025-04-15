@@ -3,12 +3,12 @@ import { EventService } from '#services/eventService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
-  .setName('event-info')
-  .setDescription('Get Event information')
+  .setName('activate-event')
+  .setDescription('Set the event to active for the bot context')
   .addStringOption((option) =>
     option
       .setName('event')
-      .setDescription('Select the event to get information about')
+      .setDescription('The event to activate')
       .setRequired(true)
       .setAutocomplete(true)
   );
@@ -18,27 +18,13 @@ export const data = new SlashCommandBuilder()
  */
 export async function execute(interaction) {
   const eventId = interaction.options.getString('event');
-  const event = await EventService.getEventById(eventId);
-  if (!event) {
-    await interaction.reply('Event not found');
-    return;
+  try {
+    const event = await EventService.activateEvent(eventId);
+    await interaction.reply(`Event ${event.name} has been activated.`);
+  } catch (error) {
+    logger.error('Error activating event', error);
+    await interaction.reply('An error occurred while activating the event.');
   }
-  const embed = {
-    title: event.name,
-    description: event.description,
-    fields: [
-      { name: 'Start Date', value: event.startDate.toString(), inline: true },
-      { name: 'End Date', value: event.endDate.toString(), inline: true },
-      { name: 'Status', value: event.status, inline: true },
-      {
-        name: 'Teams',
-        value: event.teams.map((team) => team.name).join(', ') || 'None',
-        inline: false,
-      },
-    ],
-  };
-  await interaction.reply({ embeds: [embed] });
-  logger.info(`Event info requested: ${event.name}`);
 }
 
 /**

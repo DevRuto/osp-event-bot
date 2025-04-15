@@ -3,13 +3,13 @@ import { TeamService } from '#services/teamService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
-  .setName('team-info')
+  .setName('team')
   .setDescription('Get Team information')
   .addStringOption((option) =>
     option
       .setName('team')
       .setDescription('Select the team to get information about')
-      .setRequired(true)
+      .setRequired(false)
       .setAutocomplete(true)
   );
 
@@ -18,7 +18,9 @@ export const data = new SlashCommandBuilder()
  */
 export async function execute(interaction) {
   const teamId = interaction.options.getString('team');
-  const team = await TeamService.getTeamById(teamId);
+  const team = teamId
+    ? await TeamService.getTeamById(teamId)
+    : await TeamService.getCurrentTeam(interaction.user.id);
   if (!team) {
     await interaction.reply('Team not found');
     return;
@@ -26,7 +28,15 @@ export async function execute(interaction) {
   const embed = {
     title: team.name,
     description: team.description,
-    fields: [{ name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true }],
+    fields: [
+      { name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true },
+      {
+        name: 'Members',
+        value: team.members.map((member) => `<@${member.user.discordId}>`).join('\n') || 'None',
+        inline: false,
+      },
+    ],
+    color: 0x00ae86,
   };
   await interaction.reply({ embeds: [embed] });
   logger.info(`Team info requested: ${team.name}`);

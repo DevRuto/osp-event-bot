@@ -40,3 +40,21 @@ npm start
 ## Available Commands
 
 - `/ping` - Bot responds with "Pong!"
+
+## Admin commands
+
+- `/adminrole` - Set an administrator role to use admin commands
+- `/approvechannel` - Set the channel for submissions to be forwarded to for approval
+- `/create-event` `/edit-event` - Create/Edit an event
+- `/create-team` `/edit-team` - Create/Edit a team
+- `/register-team` - Register a team for an event
+
+## Public commands
+
+- `/event` - Information for an event and teams
+- `/team` - Information for a team and members
+- `/register` - Register yourself to the event
+
+## Event commands (for participants)
+
+- `/submit` - Submit an image to the event

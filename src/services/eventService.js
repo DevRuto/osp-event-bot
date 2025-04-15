@@ -122,6 +122,34 @@ export class EventService {
   }
 
   /**
+   * Activate event
+   */
+  static async activateEvent(eventId) {
+    try {
+      // Deactivate all other events
+      await prisma.event.updateMany({
+        where: {
+          active: true,
+        },
+        data: {
+          active: false,
+        },
+      });
+      return await prisma.event.update({
+        where: {
+          id: eventId,
+        },
+        data: {
+          active: true,
+        },
+      });
+    } catch (error) {
+      logger.error(`Error activating event with ID ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Regsiter team to event
    */
   static async registerTeamToEvent(eventId, teamId) {
@@ -141,6 +169,78 @@ export class EventService {
     } catch (error) {
       console.log(error);
       logger.error(`Error registering team ${teamId} to event ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get active event
+   */
+  static async getActiveEvent() {
+    try {
+      const event = await prisma.event.findFirst({
+        where: {
+          active: true,
+        },
+        include: {
+          teams: true,
+        },
+      });
+      return event;
+    } catch (error) {
+      logger.error('Error getting active event', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if a user is a registered member of an active event
+   * @param {String} discordId - The Discord ID of the user
+   */
+  static async isUserRegistered(discordId) {
+    try {
+      const event = await prisma.event.findFirst({
+        where: {
+          active: true,
+          participants: {
+            some: {
+              user: {
+                discordId,
+              },
+              status: 'REGISTERED',
+            },
+          },
+        },
+      });
+      return !!event;
+    } catch (error) {
+      logger.error(`Error checking if user ${discordId} is registered:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Register a user to the active event
+   * @param {String} discordId - The Discord ID of the user
+   * @param {String} rsn - The RuneScape name of the user
+   */
+  static async registerUserToEvent(discordId, rsn) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.create({
+        data: {
+          status: 'REGISTERED',
+          rsn,
+          user: { connect: { discordId } },
+          event: { connect: { id: activeEvent.id } },
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error registering user ${discordId} to event:`, error);
       throw error;
     }
   }
