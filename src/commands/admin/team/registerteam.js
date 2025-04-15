@@ -8,13 +8,6 @@ export const data = new SlashCommandBuilder()
   .setDescription('Register team to the event')
   .addStringOption((option) =>
     option
-      .setName('event')
-      .setDescription('Select the event to register the team to')
-      .setRequired(true)
-      .setAutocomplete(true)
-  )
-  .addStringOption((option) =>
-    option
       .setName('team')
       .setDescription('Select the team to register')
       .setRequired(true)
@@ -25,12 +18,11 @@ export const data = new SlashCommandBuilder()
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function execute(interaction) {
-  const eventId = interaction.options.getString('event');
   const teamId = interaction.options.getString('team');
   // Register the team to the event
-  const event = await EventService.getEventById(eventId);
+  const event = await EventService.getActiveEvent();
   if (!event) {
-    await interaction.reply('Event not found');
+    await interaction.reply('No active event found');
     return;
   }
   const team = await TeamService.getTeamById(teamId);
@@ -39,9 +31,9 @@ export async function execute(interaction) {
     return;
   }
   try {
-    await EventService.registerTeamToEvent(eventId, teamId);
+    await EventService.registerTeamToEvent(event.id, teamId);
     await interaction.reply(`Team ${team.name} registered to event ${event.name}`);
-    logger.info(`Team ${teamId} registered to event ${eventId}`);
+    logger.info(`Team ${teamId} registered to event ${event.id}`);
   } catch (error) {
     logger.error('Error registering team to event', error);
     await interaction.reply('An error occurred while registering the team to the event.');
@@ -52,16 +44,9 @@ export async function execute(interaction) {
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function autocomplete(interaction) {
-  const focusedOption = interaction.options.getFocused(true);
-  if (focusedOption.name === 'event') {
-    const events = await EventService.getEvents();
-    const filtered = events.filter((event) => event.name.startsWith(focusedOption.value));
-    const choices = filtered.map((event) => event).slice(0, 25);
-    await interaction.respond(choices.map((choice) => ({ name: choice.name, value: choice.id })));
-  } else if (focusedOption.name === 'team') {
-    const teams = await TeamService.getTeams();
-    const filtered = teams.filter((team) => team.name.startsWith(focusedOption.value));
-    const choices = filtered.map((event) => event).slice(0, 25);
-    await interaction.respond(choices.map((choice) => ({ name: choice.name, value: choice.id })));
-  }
+  const focusedValue = interaction.options.getFocused();
+  const teams = await TeamService.getTeams();
+  const filtered = teams.filter((team) => team.name.startsWith(focusedValue));
+  const choices = filtered.map((event) => event).slice(0, 25);
+  await interaction.respond(choices.map((choice) => ({ name: choice.name, value: choice.id })));
 }

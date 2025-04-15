@@ -9,7 +9,7 @@ export const data = new SlashCommandBuilder()
     option
       .setName('event')
       .setDescription('Select the event to get information about')
-      .setRequired(true)
+      .setRequired(false)
       .setAutocomplete(true)
   );
 
@@ -18,7 +18,9 @@ export const data = new SlashCommandBuilder()
  */
 export async function execute(interaction) {
   const eventId = interaction.options.getString('event');
-  const event = await EventService.getEventById(eventId);
+  const event = eventId
+    ? await EventService.getEventById(eventId)
+    : await EventService.getActiveEvent();
   if (!event) {
     await interaction.reply('Event not found');
     return;

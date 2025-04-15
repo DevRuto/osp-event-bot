@@ -19,17 +19,11 @@ export const data = new SlashCommandBuilder()
 export async function execute(interaction) {
   const eventId = interaction.options.getString('event');
   try {
-    await EventService.activateEvent(eventId);
-    await interaction.reply({
-      content: `Event ${eventId} has been activated.`,
-      ephemeral: true,
-    });
+    const event = await EventService.activateEvent(eventId);
+    await interaction.reply(`Event ${event.name} has been activated.`);
   } catch (error) {
     logger.error('Error activating event', error);
-    await interaction.reply({
-      content: 'An error occurred while activating the event.',
-      ephemeral: true,
-    });
+    await interaction.reply('An error occurred while activating the event.');
   }
 }
 

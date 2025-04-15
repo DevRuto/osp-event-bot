@@ -135,7 +135,7 @@ export class EventService {
           active: false,
         },
       });
-      await prisma.event.update({
+      return await prisma.event.update({
         where: {
           id: eventId,
         },
@@ -169,6 +169,26 @@ export class EventService {
     } catch (error) {
       console.log(error);
       logger.error(`Error registering team ${teamId} to event ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get active event
+   */
+  static async getActiveEvent() {
+    try {
+      const event = await prisma.event.findFirst({
+        where: {
+          active: true,
+        },
+        include: {
+          teams: true,
+        },
+      });
+      return event;
+    } catch (error) {
+      logger.error('Error getting active event', error);
       throw error;
     }
   }
