@@ -101,7 +101,7 @@ export async function execute(interaction) {
  */
 export async function autocomplete(interaction) {
   const focusedValue = interaction.options.getFocused();
-  const events = await EventService.getEvents(interaction.guildId);
+  const events = await EventService.getEvents();
   const filtered = events.filter((event) => event.name.startsWith(focusedValue));
   const choices = filtered.map((event) => event).slice(0, 25);
   await interaction.respond(choices.map((choice) => ({ name: choice.name, value: choice.id })));
