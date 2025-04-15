@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { ConfigService } from '#services/configService.js';
+import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import logger from '#utils/logger.js';
 import { EventService } from '#services/eventService.js';
 
 export const data = new SlashCommandBuilder()
   .setName('create-event')
   .setDescription('Create an event')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addStringOption((option) =>
     option.setName('name').setDescription('The name of the event').setRequired(true)
   )
@@ -23,20 +23,6 @@ export const data = new SlashCommandBuilder()
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function execute(interaction) {
-  if (!interaction.member.permissions.has('Administrator')) {
-    const customRole = await ConfigService.getAdminRole(interaction.guildId);
-    if (customRole) {
-      const member = await interaction.guild.members.fetch(interaction.user.id);
-      if (!member.roles.cache.has(customRole)) {
-        await interaction.reply('You do not have permission to set the approval channel.');
-        return;
-      }
-    } else {
-      await interaction.reply('You do not have permission to set the approval channel.');
-      return;
-    }
-  }
-
   const name = interaction.options.getString('name');
   const description = interaction.options.getString('description');
   const startDate = interaction.options.getString('startdate');

@@ -1,10 +1,16 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {
+  ChannelType,
+  ChatInputCommandInteraction,
+  PermissionFlagsBits,
+  SlashCommandBuilder,
+} from 'discord.js';
 import { ConfigService } from '#services/configService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('approvechannel')
   .setDescription('Get or set the approval submission channel')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addChannelOption((option) =>
     option
       .setName('channel')
@@ -28,22 +34,6 @@ export async function execute(interaction) {
       await interaction.reply('No approval channel set.');
     }
     return;
-  }
-
-  // Check if user has admin permissions
-  // Check custom role first
-  if (!interaction.member.permissions.has('Administrator')) {
-    const customRole = await ConfigService.getAdminRole(interaction.guildId);
-    if (customRole) {
-      const member = await interaction.guild.members.fetch(interaction.user.id);
-      if (!member.roles.cache.has(customRole)) {
-        await interaction.reply('You do not have permission to set the approval channel.');
-        return;
-      }
-    } else {
-      await interaction.reply('You do not have permission to set the approval channel.');
-      return;
-    }
   }
 
   // if channel exists, set it as the approval channel

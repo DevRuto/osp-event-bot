@@ -1,10 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { EventService } from '#services/eventService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('activate-event')
   .setDescription('Set the event to active for the bot context')
+  .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addStringOption((option) =>
     option
       .setName('event')

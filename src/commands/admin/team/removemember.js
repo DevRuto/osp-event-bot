@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { ConfigService } from '#services/configService.js';
+import { ChatInputCommandInteraction, SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { TeamService } from '#services/teamService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('removemember')
   .setDescription('Remove a member from the team.')
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
   .addUserOption((option) =>
     option.setName('member').setDescription('The member to remove from the team.').setRequired(true)
   );
@@ -14,19 +14,6 @@ export const data = new SlashCommandBuilder()
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function execute(interaction) {
-  if (!interaction.member.permissions.has('Administrator')) {
-    const customRole = await ConfigService.getAdminRole(interaction.guildId);
-    if (customRole) {
-      const member = await interaction.guild.members.fetch(interaction.user.id);
-      if (!member.roles.cache.has(customRole)) {
-        await interaction.reply('You do not have permission to set the approval channel.');
-        return;
-      }
-    } else {
-      await interaction.reply('You do not have permission to set the approval channel.');
-      return;
-    }
-  }
   const member = interaction.options.getUser('member');
 
   try {
