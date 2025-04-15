@@ -39,18 +39,18 @@ export async function execute(interaction) {
 
   // Check if the user is already in the team
   const team = await TeamService.getTeamById(teamId);
-  const isMember = team.members.some((member) => member.user.discordId === member.Id);
+  const isMember = team.members.some((member) => member.user.discordId === member.id);
   if (isMember) {
     await interaction.reply('This user is already a member of the team.');
     return;
   }
   // Check if the user is already in another team
-  if (await TeamService.isUserInTeam(member.Id)) {
+  if (await TeamService.isUserInTeam(member.id)) {
     await interaction.reply('This user is already in another team.');
     return;
   }
   try {
-    const team = await TeamService.addMemberToTeam(teamId, member.Id);
+    const team = await TeamService.addMemberToTeam(teamId, member.id);
     await interaction.reply(`Member <@${member.id}> added to team ${team.name} successfully!`);
     logger.info(
       `Member ${member.username} - ${member.id} added to team ${team.name} ${team.id} successfully!`
