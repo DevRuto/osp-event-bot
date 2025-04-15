@@ -94,7 +94,7 @@ export class TeamService {
       throw error;
     }
   }
- 
+
   /**
    * Update a team by ID
    * @param {String} teamId - The ID of the team
