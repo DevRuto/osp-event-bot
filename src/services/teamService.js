@@ -174,16 +174,16 @@ export class TeamService {
 
   /**
    * Check if a user is in a team
-   * @param {String} userId - The discord Id of the user
+   * @param {String} discordId - The discord Id of the user
    */
-  static async isUserInTeam(userId) {
+  static async isUserInTeam(discordId) {
     try {
       const team = await prisma.team.findFirst({
         where: {
           members: {
             some: {
               user: {
-                discordId: userId,
+                discordId,
               },
             },
           },
