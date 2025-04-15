@@ -75,6 +75,7 @@ model EventParticipant {
   id      String      @id @default(uuid())
   userId  String
   eventId String
+  rsn     String? // Registered in-game name
   status  String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
   user    DiscordUser @relation(fields: [userId], references: [id])
   event   Event       @relation(fields: [eventId], references: [id])
