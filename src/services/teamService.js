@@ -68,11 +68,19 @@ export class TeamService {
       throw error;
     }
   }
+  /**
+   * @typedef {import('@prisma/client').Team & {
+   *   leader: import('@prisma/client').DiscordUser,
+   *   members: (import('@prisma/client').TeamMember & {
+   *     user: import('@prisma/client').DiscordUser
+   *   })[]
+   * }} TeamWithDetails
+   */
 
   /**
    * Get a team by ID
    * @param {String} teamId - The ID of the team
-   * @returns {Promise<import('@prisma/client').Team & { leader: import('@prisma/client').DiscordUser }>} The team object
+   * @returns {Promise<TeamWithDetails>} The team object
    */
   static async getTeamById(teamId) {
     try {
@@ -82,7 +90,11 @@ export class TeamService {
         },
         include: {
           leader: true,
-          members: true,
+          members: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
       if (!team) {

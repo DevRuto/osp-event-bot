@@ -26,7 +26,15 @@ export async function execute(interaction) {
   const embed = {
     title: team.name,
     description: team.description,
-    fields: [{ name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true }],
+    fields: [
+      { name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true },
+      {
+        name: 'Members',
+        value: team.members.map((member) => `<@${member.user.discordId}>`).join(', ') || 'None',
+        inline: false,
+      },
+    ],
+    color: 0x00ae86,
   };
   await interaction.reply({ embeds: [embed] });
   logger.info(`Team info requested: ${team.name}`);
