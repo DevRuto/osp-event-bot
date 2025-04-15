@@ -33,6 +33,7 @@ model Event {
   startDate   DateTime
   endDate     DateTime?
   status      String    @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
+  active      Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 

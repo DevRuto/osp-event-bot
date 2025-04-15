@@ -95,4 +95,32 @@ export class EventService {
       throw error;
     }
   }
+
+  /**
+   * Activate event
+   */
+  static async activateEvent(eventId) {
+    try {
+      // Deactivate all other events
+      await prisma.event.updateMany({
+        where: {
+          active: true,
+        },
+        data: {
+          active: false,
+        },
+      });
+      await prisma.event.update({
+        where: {
+          id: eventId,
+        },
+        data: {
+          active: true,
+        },
+      });
+    } catch (error) {
+      logger.error(`Error activating event with ID ${eventId}:`, error);
+      throw error;
+    }
+  }
 }
