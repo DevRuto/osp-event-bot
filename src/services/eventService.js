@@ -122,6 +122,34 @@ export class EventService {
   }
 
   /**
+   * Activate event
+   */
+  static async activateEvent(eventId) {
+    try {
+      // Deactivate all other events
+      await prisma.event.updateMany({
+        where: {
+          active: true,
+        },
+        data: {
+          active: false,
+        },
+      });
+      return await prisma.event.update({
+        where: {
+          id: eventId,
+        },
+        data: {
+          active: true,
+        },
+      });
+    } catch (error) {
+      logger.error(`Error activating event with ID ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Regsiter team to event
    */
   static async registerTeamToEvent(eventId, teamId) {
@@ -141,6 +169,26 @@ export class EventService {
     } catch (error) {
       console.log(error);
       logger.error(`Error registering team ${teamId} to event ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get active event
+   */
+  static async getActiveEvent() {
+    try {
+      const event = await prisma.event.findFirst({
+        where: {
+          active: true,
+        },
+        include: {
+          teams: true,
+        },
+      });
+      return event;
+    } catch (error) {
+      logger.error('Error getting active event', error);
       throw error;
     }
   }
