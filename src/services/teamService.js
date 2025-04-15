@@ -72,13 +72,17 @@ export class TeamService {
   /**
    * Get a team by ID
    * @param {String} teamId - The ID of the team
-   * @returns {Promise<import('@prisma/client').Team>} The team object
+   * @returns {Promise<import('@prisma/client').Team & { leader: import('@prisma/client').DiscordUser }>} The team object
    */
   static async getTeamById(teamId) {
     try {
       const team = await prisma.team.findUnique({
         where: {
           id: teamId,
+        },
+        include: {
+          leader: true,
+          members: true,
         },
       });
       if (!team) {
@@ -90,6 +94,7 @@ export class TeamService {
       throw error;
     }
   }
+
   /**
    * Update a team by ID
    * @param {String} teamId - The ID of the team

@@ -69,6 +69,31 @@ export class EventService {
   }
 
   /**
+   * Get an event by ID
+   * @param {String} eventId - The ID of the event
+   * @return {Promise<import('@prisma/client').Event>} The event object
+   */
+  static async getEventById(eventId) {
+    try {
+      const event = await prisma.event.findUnique({
+        where: {
+          id: eventId,
+        },
+        include: {
+          teams: true,
+        },
+      });
+      if (!event) {
+        throw new Error(`Event with ID ${eventId} not found`);
+      }
+      return event;
+    } catch (error) {
+      logger.error(`Error getting event with ID ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
    * Update an event by ID
    * @param {String} eventId - The ID of the event
    * @param {Object} data - The data to update
@@ -120,6 +145,30 @@ export class EventService {
       });
     } catch (error) {
       logger.error(`Error activating event with ID ${eventId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Regsiter team to event
+   */
+  static async registerTeamToEvent(eventId, teamId) {
+    try {
+      await prisma.event.update({
+        where: {
+          id: eventId,
+        },
+        data: {
+          teams: {
+            connect: {
+              id: teamId,
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      logger.error(`Error registering team ${teamId} to event ${eventId}:`, error);
       throw error;
     }
   }
