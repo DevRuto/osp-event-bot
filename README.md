@@ -51,8 +51,8 @@ npm start
 
 ## Public commands
 
-- `/event-info` - Information for an event and teams
-- `/team-info` - Information for a team and members
+- `/event` - Information for an event and teams
+- `/team` - Information for a team and members
 
 ## Event commands (for participants)
 
