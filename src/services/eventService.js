@@ -192,4 +192,56 @@ export class EventService {
       throw error;
     }
   }
+
+  /**
+   * Check if a user is a registered member of an active event
+   * @param {String} discordId - The Discord ID of the user
+   */
+  static async isUserRegistered(discordId) {
+    try {
+      const event = await prisma.event.findFirst({
+        where: {
+          active: true,
+          participants: {
+            some: {
+              user: {
+                discordId,
+              },
+              status: 'REGISTERED',
+            },
+          },
+        },
+      });
+      return !!event;
+    } catch (error) {
+      logger.error(`Error checking if user ${discordId} is registered:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Register a user to the active event
+   * @param {String} discordId - The Discord ID of the user
+   * @param {String} rsn - The RuneScape name of the user
+   */
+  static async registerUserToEvent(discordId, rsn) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.create({
+        data: {
+          status: 'REGISTERED',
+          rsn,
+          user: { connect: { discordId } },
+          event: { connect: { id: activeEvent.id } },
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error registering user ${discordId} to event:`, error);
+      throw error;
+    }
+  }
 }

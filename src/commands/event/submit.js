@@ -1,6 +1,8 @@
 import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import logger from '#utils/logger.js';
 import { ConfigService } from '#services/configService.js';
+import { EventService } from '#services/eventService.js';
+import { TeamService } from '#services/teamService.js';
+import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
@@ -45,6 +47,41 @@ export async function execute(interaction) {
       );
       return;
     }
+  }
+
+  // Check if the user is registered for the event'
+  if (!(await EventService.isUserRegistered(interaction.user.id))) {
+    await interaction.reply({
+      content: 'You are not registered for the event. Please register first.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Check if user is part of a team
+  if (!(await TeamService.isUserInTeam(interaction.user.id))) {
+    await interaction.reply({
+      content: 'You are not part of a team. Please contact your team leader.',
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Check if the event has started
+  const activeEvent = await EventService.getActiveEvent();
+  if (!activeEvent) {
+    await interaction.reply({
+      content: 'There is no active event to submit items for.',
+      ephemeral: true,
+    });
+    return;
+  }
+  if (activeEvent.status !== 'ONGOING') {
+    await interaction.reply({
+      content: 'The event is not active. Please check back later.',
+      ephemeral: true,
+    });
+    return;
   }
 
   const name = interaction.options.getString('name');

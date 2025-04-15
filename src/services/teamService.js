@@ -108,6 +108,39 @@ export class TeamService {
   }
 
   /**
+   * Get current team of a user
+   * @param {String} discordId - The ID of the user
+   * @returns {Promise<TeamWithDetails>} The team object
+   */
+  static async getCurrentTeam(discordId) {
+    try {
+      const team = await prisma.team.findFirst({
+        where: {
+          members: {
+            some: {
+              user: {
+                discordId,
+              },
+            },
+          },
+        },
+        include: {
+          leader: true,
+          members: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+      return team;
+    } catch (error) {
+      logger.error('Error getting current team', error);
+      throw error;
+    }
+  }
+
+  /**
    * Update a team by ID
    * @param {String} teamId - The ID of the team
    * @param {String} leaderId - The ID of the team leader
