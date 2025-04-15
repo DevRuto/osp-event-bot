@@ -13,28 +13,28 @@ model DiscordUser {
   username      String
   discriminator String?
   avatar        String?
-  roles         String   // Stored as JSON string of role IDs
+  roles         String // Stored as JSON string of role IDs
   joinedAt      DateTime @default(now())
   lastSeen      DateTime @default(now())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Relations
-  teams         TeamMember[]
-  events        EventParticipant[]
-  teamsLed      Team[]      // Teams where this user is the leader
-  submissions   Submission[]
+  teams       TeamMember[]
+  events      EventParticipant[]
+  teamsLed    Team[] // Teams where this user is the leader
+  submissions Submission[]
 }
 
 model Event {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
   description String?
   startDate   DateTime
   endDate     DateTime?
-  status      String   @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  status      String    @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relations
   participants EventParticipant[]
@@ -48,7 +48,7 @@ model Team {
   description String?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  leaderId    String      // ID of the team leader
+  leaderId    String // ID of the team leader
   leader      DiscordUser @relation(fields: [leaderId], references: [id])
 
   // Relations
@@ -59,46 +59,54 @@ model Team {
 
 // Junction tables for many-to-many relationships
 model TeamMember {
-  id        String      @id @default(uuid())
-  userId    String
-  teamId    String
-  role      String      @default("MEMBER") // LEADER, MEMBER, etc.
-  joinedAt  DateTime    @default(now())
-  user      DiscordUser @relation(fields: [userId], references: [id])
-  team      Team        @relation(fields: [teamId], references: [id])
+  id       String      @id @default(uuid())
+  userId   String
+  teamId   String
+  role     String      @default("MEMBER") // LEADER, MEMBER, etc.
+  joinedAt DateTime    @default(now())
+  user     DiscordUser @relation(fields: [userId], references: [id])
+  team     Team        @relation(fields: [teamId], references: [id])
 
   @@unique([userId, teamId])
 }
 
 model EventParticipant {
-  id        String      @id @default(uuid())
-  userId    String
-  eventId   String
-  status    String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
-  user      DiscordUser @relation(fields: [userId], references: [id])
-  event     Event       @relation(fields: [eventId], references: [id])
+  id      String      @id @default(uuid())
+  userId  String
+  eventId String
+  status  String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
+  user    DiscordUser @relation(fields: [userId], references: [id])
+  event   Event       @relation(fields: [eventId], references: [id])
 
   @@unique([userId, eventId])
 }
 
 model Submission {
-  id          String      @id @default(uuid())
-  name        String      // Name of the submitted item
-  value       String      // Value of the submitted item
-  proofUrl    String      // URL to the proof image
-  status      String      @default("PENDING") // PENDING, APPROVED, REJECTED
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id        String   @id @default(uuid())
+  name      String // Name of the submitted item
+  value     String // Value of the submitted item
+  proofUrl  String // URL to the proof image
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  userId      String      // ID of the user who submitted
-  eventId     String      // ID of the event this submission is for
-  teamId      String      // ID of the team this submission belongs to
-  user        DiscordUser @relation(fields: [userId], references: [id])
-  event       Event       @relation(fields: [eventId], references: [id])
-  team        Team        @relation(fields: [teamId], references: [id])
+  userId  String // ID of the user who submitted
+  eventId String // ID of the event this submission is for
+  teamId  String // ID of the team this submission belongs to
+  user    DiscordUser @relation(fields: [userId], references: [id])
+  event   Event       @relation(fields: [eventId], references: [id])
+  team    Team        @relation(fields: [teamId], references: [id])
 
   @@index([userId])
   @@index([eventId])
   @@index([teamId])
+}
+
+model Config {
+  guildId     String
+  settingType String
+  value       String
+
+  @@id([guildId, settingType])
 }
