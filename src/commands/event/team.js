@@ -1,14 +1,14 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import { EventService } from '#services/eventService.js';
+import { TeamService } from '#services/teamService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
-  .setName('event-info')
-  .setDescription('Get Event information')
+  .setName('team')
+  .setDescription('Get Team information')
   .addStringOption((option) =>
     option
-      .setName('event')
-      .setDescription('Select the event to get information about')
+      .setName('team')
+      .setDescription('Select the team to get information about')
       .setRequired(false)
       .setAutocomplete(true)
   );
@@ -17,30 +17,29 @@ export const data = new SlashCommandBuilder()
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function execute(interaction) {
-  const eventId = interaction.options.getString('event');
-  const event = eventId
-    ? await EventService.getEventById(eventId)
-    : await EventService.getActiveEvent();
-  if (!event) {
-    await interaction.reply('Event not found');
+  const teamId = interaction.options.getString('team');
+  const team = teamId
+    ? await TeamService.getTeamById(teamId)
+    : await TeamService.getCurrentTeam(interaction.user.id);
+  if (!team) {
+    await interaction.reply('Team not found');
     return;
   }
   const embed = {
-    title: event.name,
-    description: event.description,
+    title: team.name,
+    description: team.description,
     fields: [
-      { name: 'Start Date', value: event.startDate.toString(), inline: true },
-      { name: 'End Date', value: event.endDate.toString(), inline: true },
-      { name: 'Status', value: event.status, inline: true },
+      { name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true },
       {
-        name: 'Teams',
-        value: event.teams.map((team) => team.name).join('\n') || 'None',
+        name: 'Members',
+        value: team.members.map((member) => `<@${member.user.discordId}>`).join('\n') || 'None',
         inline: false,
       },
     ],
+    color: 0x00ae86,
   };
   await interaction.reply({ embeds: [embed] });
-  logger.info(`Event info requested: ${event.name}`);
+  logger.info(`Team info requested: ${team.name}`);
 }
 
 /**
@@ -48,7 +47,7 @@ export async function execute(interaction) {
  */
 export async function autocomplete(interaction) {
   const focusedValue = interaction.options.getFocused();
-  const events = await EventService.getEvents();
+  const events = await TeamService.getTeams();
   const filtered = events.filter((event) => event.name.startsWith(focusedValue));
   const choices = filtered.map((event) => event).slice(0, 25);
   await interaction.respond(choices.map((choice) => ({ name: choice.name, value: choice.id })));
