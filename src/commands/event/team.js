@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { TeamService } from '#services/teamService.js';
 import logger from '#utils/logger.js';
+import { getColorFromName } from '#utils/color.js';
 
 export const data = new SlashCommandBuilder()
   .setName('team')
@@ -40,7 +41,7 @@ export async function execute(interaction) {
         inline: false,
       },
     ],
-    color: 0x00ae86,
+    color: getColorFromName(team.name),
   };
   await interaction.reply({ embeds: [embed] });
   logger.info(`Team info requested: ${team.name}`);

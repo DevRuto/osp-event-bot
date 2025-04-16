@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
 import { EventService } from '#services/eventService.js';
 import logger from '#utils/logger.js';
+import { getColorFromName } from '#utils/color.js';
 
 export const data = new SlashCommandBuilder()
   .setName('event')
@@ -38,6 +39,7 @@ export async function execute(interaction) {
         inline: false,
       },
     ],
+    color: getColorFromName(event.name),
   };
   await interaction.reply({ embeds: [embed] });
   logger.info(`Event info requested: ${event.name}`);
