@@ -1,6 +1,7 @@
 import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { EventService } from '#services/eventService.js';
 import logger from '#utils/logger.js';
+import { ConfigService } from '#services/configService.js';
 
 export const data = new SlashCommandBuilder()
   .setName('register')
@@ -49,12 +50,22 @@ export async function execute(interaction) {
       await interaction.reply({
         content:
           `You have successfully registered for the event with RSN: ${rsn}.` +
-          (duo ? `Make sure your duo partner is registered with RSN: ${duo}.` : ''),
+          (duo ? ` Make sure your duo partner is registered with RSN: ${duo}.` : ''),
         flags: MessageFlags.Ephemeral,
       });
       logger.info(
         `User ${interaction.user.username} (${interaction.user.id}) registered for event ${activeEvent.name} with RSN ${rsn}`
       );
+      const signedUpChannel = await ConfigService.getSignedUpChannel(interaction.guildId);
+      if (signedUpChannel) {
+        const channel = await interaction.client.channels.fetch(signedUpChannel);
+        if (channel && channel.isTextBased()) {
+          await channel.send({
+            content: `<@${interaction.user.id}> has registered for the event with RSN: ${rsn}. ${duo ? `With duo partner: ${duo}` : ''}`,
+            allowedMentions: { parse: [] },
+          });
+        }
+      }
     }
   } catch (error) {
     console.log(error);
