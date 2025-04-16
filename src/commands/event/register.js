@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, MessageFlags, SlashCommandBuilder } from 'discord.js';
 import { EventService } from '#services/eventService.js';
 import logger from '#utils/logger.js';
 
@@ -17,7 +17,7 @@ export async function execute(interaction) {
   if (!activeEvent) {
     await interaction.reply({
       content: 'There is no active event to register for.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -25,7 +25,7 @@ export async function execute(interaction) {
   if (!rsn) {
     await interaction.reply({
       content: 'Please provide a valid RuneScape name.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -33,14 +33,14 @@ export async function execute(interaction) {
     await EventService.registerUserToEvent(interaction.user.id, rsn);
     await interaction.reply({
       content: `You have successfully registered for the event with RSN: ${rsn}`,
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   } catch (error) {
     console.log(error);
     logger.error('Error registering user to event', error);
     await interaction.reply({
       content: 'An error occurred while registering you for the event. Please try again later.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
   }
 }

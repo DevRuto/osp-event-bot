@@ -1,4 +1,9 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import {
+  ChannelType,
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from 'discord.js';
 import { ConfigService } from '#services/configService.js';
 import { EventService } from '#services/eventService.js';
 import { TeamService } from '#services/teamService.js';
@@ -53,7 +58,7 @@ export async function execute(interaction) {
   if (!(await EventService.isUserRegistered(interaction.user.id))) {
     await interaction.reply({
       content: 'You are not registered for the event. Please register first.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -62,7 +67,7 @@ export async function execute(interaction) {
   if (!(await TeamService.isUserInTeam(interaction.user.id))) {
     await interaction.reply({
       content: 'You are not part of a team. Please contact your team leader.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
@@ -72,14 +77,14 @@ export async function execute(interaction) {
   if (!activeEvent) {
     await interaction.reply({
       content: 'There is no active event to submit items for.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }
   if (activeEvent.status !== 'ONGOING') {
     await interaction.reply({
       content: 'The event is not active. Please check back later.',
-      ephemeral: true,
+      flags: MessageFlags.Ephemeral,
     });
     return;
   }

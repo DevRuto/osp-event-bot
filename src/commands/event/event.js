@@ -22,7 +22,7 @@ export async function execute(interaction) {
     ? await EventService.getEventById(eventId)
     : await EventService.getActiveEvent();
   if (!event) {
-    await interaction.reply('Event not found');
+    await interaction.reply('No event found.');
     return;
   }
   const embed = {
