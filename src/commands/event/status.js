@@ -41,4 +41,5 @@ export async function execute(interaction) {
     fields,
   };
   await interaction.reply({ embeds: [embed] });
+  logger.info(`Event status requested by ${user.tag}`);
 }
