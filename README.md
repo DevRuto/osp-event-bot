@@ -43,10 +43,15 @@ npm start
 
 ## Admin commands
 
-- `/adminrole` - Set an administrator role to use admin commands
 - `/approvechannel` - Set the channel for submissions to be forwarded to for approval
+- `/signupchannel` - Set the channel to announce registered members
+- `/acceptedchannel` - Set the channel to announced approved submissions
+
+## Mod commands
+
 - `/create-event` `/edit-event` - Create/Edit an event
 - `/create-team` `/edit-team` - Create/Edit a team
+- `/activate-event` - Activate the event for team commands
 - `/register-team` - Register a team for an event
 
 ## Public commands
@@ -54,6 +59,7 @@ npm start
 - `/event` - Information for an event and teams
 - `/team` - Information for a team and members
 - `/register` - Register yourself to the event
+- `/status` - Status for yourself
 
 ## Event commands (for participants)
 
