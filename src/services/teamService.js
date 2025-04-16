@@ -7,7 +7,7 @@ export class TeamService {
    * @param {String} leaderId - (Optional) The ID of the team leader
    * @param {String} name - The name of the team
    * @param {String} description - The description of the team
-   * @returns {Promise<void>}
+   * @returns {Promise<import('@prisma/client').Team>} The created team object
    */
   static async createTeam(leaderId, name, description) {
     // Validate inputs
@@ -16,7 +16,7 @@ export class TeamService {
     }
     // Create the team
     try {
-      await prisma.team.create({
+      return await prisma.team.create({
         data: {
           name,
           description,
