@@ -34,7 +34,7 @@ export async function execute(interaction) {
       { name: 'Status', value: event.status, inline: true },
       {
         name: 'Teams',
-        value: event.teams.map((team) => team.name).join('\n') || 'None',
+        value: event.teams.map((team, index) => `${index + 1}. ${team.name}`).join('\n') || 'None',
         inline: false,
       },
     ],

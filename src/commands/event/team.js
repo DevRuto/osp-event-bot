@@ -32,7 +32,11 @@ export async function execute(interaction) {
       { name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true },
       {
         name: 'Members',
-        value: team.members.map((member) => `<@${member.user.discordId}>`).join('\n') || 'None',
+        value:
+          team.members
+            .filter((member) => member.user.discordId !== team.leader.discordId)
+            .map((member, index) => `${index + 1}. <@${member.user.discordId}>`)
+            .join('\n') || 'None',
         inline: false,
       },
     ],
