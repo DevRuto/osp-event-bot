@@ -47,7 +47,9 @@ export async function execute(interaction) {
     } else {
       await EventService.registerUserToEvent(interaction.user.id, rsn, duo);
       await interaction.reply({
-        content: `You have successfully registered for the event with RSN: ${rsn}`,
+        content:
+          `You have successfully registered for the event with RSN: ${rsn}.` +
+          (duo ? `Make sure your duo partner is registered with RSN: ${duo}.` : ''),
         flags: MessageFlags.Ephemeral,
       });
       logger.info(

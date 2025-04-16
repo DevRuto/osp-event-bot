@@ -234,8 +234,8 @@ export class EventService {
       const participant = await prisma.eventParticipant.create({
         data: {
           status: 'REGISTERED',
-          rsn,
-          note: duo,
+          rsn: rsn?.toLocaleLowerCase(),
+          note: duo?.toLocaleLowerCase(),
           user: { connect: { discordId } },
           event: { connect: { id: activeEvent.id } },
         },
@@ -257,6 +257,12 @@ export class EventService {
       if (!activeEvent) {
         throw new Error('No active event found');
       }
+      const data = {
+        rsn: rsn?.toLocaleLowerCase(),
+      };
+      if (duo) {
+        data.note = duo.toLocaleLowerCase();
+      }
       const participant = await prisma.eventParticipant.update({
         where: {
           userId_eventId: {
@@ -264,10 +270,7 @@ export class EventService {
             eventId: activeEvent.id,
           },
         },
-        data: {
-          rsn,
-          note: duo,
-        },
+        data,
       });
       return participant;
     } catch (error) {
