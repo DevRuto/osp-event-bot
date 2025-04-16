@@ -28,15 +28,17 @@ export async function execute(interaction) {
   }
   const team = await TeamService.getCurrentTeam(user.id);
   const userDetail = await EventService.getUserDetails(user.id);
+  const fields = [
+    { name: 'Your RSN', value: userDetail.rsn || 'None', inline: true },
+    ...(userDetail.note
+      ? [{ name: 'Your Duo Partner', value: userDetail.note, inline: true }]
+      : []),
+    { name: 'Team', value: team?.name || 'None', inline: true },
+  ];
   const embed = {
     title: event.name,
     description: event.description,
-    fields: [
-      { name: 'Your RSN', value: userDetail.rsn || 'None', inline: true },
-      { name: 'Your Duo Partner', value: userDetail.note || 'None', inline: true },
-      { name: 'Team', value: team?.name || 'None', inline: true },
-    ],
+    fields,
   };
   await interaction.reply({ embeds: [embed] });
-  logger.info(`User status requested: ${user.username}`);
 }
