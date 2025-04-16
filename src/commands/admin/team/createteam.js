@@ -25,6 +25,10 @@ export async function execute(interaction) {
   const description = interaction.options.getString('description');
 
   try {
+    if (TeamService.isUserInTeam(leader.id)) {
+      await interaction.reply(`User <@${leader.id}> is already in a team.`);
+      return;
+    }
     const team = await TeamService.createTeam(leader.id, name, description);
     await TeamService.addMemberToTeam(team.id, leader.id); // Add the leader to their own team
     await interaction.reply(`Team "${name}" (Leader: ${leader.tag}) created successfully!`);
