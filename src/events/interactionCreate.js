@@ -40,10 +40,12 @@ export async function execute(interaction) {
       });
     }
   }
-
   if (interaction.isButton()) {
     const [event, action, id] = interaction.customId.split('_');
     if (event !== 'submission') return;
+    logger.info(
+      `Button clicked: ${action} - ${id} by ${interaction.user.username} (${interaction.user.id})`
+    );
 
     // TODO: Update db with the action and id
 
