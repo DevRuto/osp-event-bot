@@ -7,6 +7,9 @@ export const data = new SlashCommandBuilder()
   .setDescription('Register yourself to the event')
   .addStringOption((option) =>
     option.setName('rsn').setDescription('Your RuneScape name').setRequired(true)
+  )
+  .addStringOption((option) =>
+    option.setName('duo').setDescription("Your duo partner's RuneScape name").setRequired(false)
   );
 
 /**
@@ -22,6 +25,7 @@ export async function execute(interaction) {
     return;
   }
   const rsn = interaction.options.getString('rsn');
+  const duo = interaction.options.getString('duo');
   if (!rsn) {
     await interaction.reply({
       content: 'Please provide a valid RuneScape name.',
@@ -30,11 +34,26 @@ export async function execute(interaction) {
     return;
   }
   try {
-    await EventService.registerUserToEvent(interaction.user.id, rsn);
-    await interaction.reply({
-      content: `You have successfully registered for the event with RSN: ${rsn}`,
-      flags: MessageFlags.Ephemeral,
-    });
+    if (await EventService.isUserRegistered(interaction.user.id)) {
+      await EventService.updateUserRsn(interaction.user.id, rsn, duo);
+      await interaction.reply({
+        content: 'You are already registered for the event. Updating details',
+        flags: MessageFlags.Ephemeral,
+      });
+      logger.info(
+        `User ${interaction.user.username} (${interaction.user.id}) updated their RSN to ${rsn} for event ${activeEvent.name}`
+      );
+      return;
+    } else {
+      await EventService.registerUserToEvent(interaction.user.id, rsn, duo);
+      await interaction.reply({
+        content: `You have successfully registered for the event with RSN: ${rsn}`,
+        flags: MessageFlags.Ephemeral,
+      });
+      logger.info(
+        `User ${interaction.user.username} (${interaction.user.id}) registered for event ${activeEvent.name} with RSN ${rsn}`
+      );
+    }
   } catch (error) {
     console.log(error);
     logger.error('Error registering user to event', error);

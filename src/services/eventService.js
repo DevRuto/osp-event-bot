@@ -223,8 +223,9 @@ export class EventService {
    * Register a user to the active event
    * @param {String} discordId - The Discord ID of the user
    * @param {String} rsn - The RuneScape name of the user
+   * @param {String} duo - (Optional) The RuneScape name of the user's duo partner
    */
-  static async registerUserToEvent(discordId, rsn) {
+  static async registerUserToEvent(discordId, rsn, duo) {
     try {
       const activeEvent = await this.getActiveEvent();
       if (!activeEvent) {
@@ -234,6 +235,7 @@ export class EventService {
         data: {
           status: 'REGISTERED',
           rsn,
+          note: duo,
           user: { connect: { discordId } },
           event: { connect: { id: activeEvent.id } },
         },
@@ -241,6 +243,35 @@ export class EventService {
       return participant;
     } catch (error) {
       logger.error(`Error registering user ${discordId} to event:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Update user's RSN in the active event
+   * @param {String} discordId - The Discord ID of the user
+   */
+  static async updateUserRsn(discordId, rsn, duo) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.update({
+        where: {
+          userId_eventId: {
+            userId: discordId,
+            eventId: activeEvent.id,
+          },
+        },
+        data: {
+          rsn,
+          note: duo,
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error updating RSN for user ${discordId}:`, error);
       throw error;
     }
   }

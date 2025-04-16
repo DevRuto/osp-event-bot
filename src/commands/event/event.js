@@ -29,8 +29,8 @@ export async function execute(interaction) {
     title: event.name,
     description: event.description,
     fields: [
-      { name: 'Start Date', value: event.startDate.toString(), inline: true },
-      { name: 'End Date', value: event.endDate.toString(), inline: true },
+      { name: 'Start Date', value: event.startDate?.toString() || 'None', inline: true },
+      { name: 'End Date', value: event.endDate?.toString() || 'None', inline: true },
       { name: 'Status', value: event.status, inline: true },
       {
         name: 'Teams',
