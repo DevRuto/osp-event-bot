@@ -278,4 +278,23 @@ export class EventService {
       throw error;
     }
   }
+
+  static async getUserDetails(discordId) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.findFirst({
+        where: {
+          userId: discordId,
+          eventId: activeEvent.id,
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error getting user details for ${discordId}:`, error);
+      throw error;
+    }
+  }
 }
