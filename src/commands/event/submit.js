@@ -1,4 +1,7 @@
 import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
   ChannelType,
   ChatInputCommandInteraction,
   MessageFlags,
@@ -101,10 +104,33 @@ export async function execute(interaction) {
   }
 
   logger.info(`Item submitted: ${name} - ${value}`);
-  await interaction.reply(`Item submitted: ${name} - ${value} - Proof type: ${proof}`);
+  await interaction.reply(`Item submitted: ${name} - ${value}`);
 
   // Forward the submission to the approval channel
+  const embed = {
+    title: 'New Item Submission',
+    description: `Name: ${name}\nValue: ${value}`,
+    image: { url: proof },
+    fields: [{ name: 'Status', value: 'Pending', inline: false }],
+    footer: { text: `Submitted by: ${interaction.user.tag}` },
+  };
+  if (attachment) {
+    embed.image.url = attachment.url;
+  }
+  // Create approve and deny buttons
+  const approve = new ButtonBuilder()
+    .setCustomId('submission_approve_1234')
+    .setLabel('Approve')
+    .setStyle(ButtonStyle.Success);
+
+  const deny = new ButtonBuilder()
+    .setCustomId('submission_deny_1234')
+    .setLabel('Deny')
+    .setStyle(ButtonStyle.Danger);
+
+  const row = new ActionRowBuilder().addComponents(approve, deny);
   await channel.send({
-    content: `New item submitted:\nName: ${name}\nValue: ${value}\nProof: ${proof}`,
+    embeds: [embed],
+    components: [row],
   });
 }
