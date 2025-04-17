@@ -23,9 +23,8 @@ export async function execute(interaction) {
   const leader = interaction.options.getUser('leader');
   const name = interaction.options.getString('name');
   const description = interaction.options.getString('description');
-
   try {
-    if (TeamService.isUserInTeam(leader.id)) {
+    if (await TeamService.isUserInTeam(leader.id)) {
       await interaction.reply(`User <@${leader.id}> is already in a team.`);
       return;
     }
