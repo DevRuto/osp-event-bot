@@ -22,7 +22,7 @@ export class TeamService {
           description,
           leader: {
             connect: {
-              discordId: leaderId,
+              id: leaderId,
             },
           },
         },
@@ -119,7 +119,7 @@ export class TeamService {
           members: {
             some: {
               user: {
-                discordId,
+                id: discordId,
               },
             },
           },
@@ -153,7 +153,7 @@ export class TeamService {
       if (leaderId) {
         updateData.leader = {
           connect: {
-            discordId: leaderId,
+            id: leaderId,
           },
         };
       }
@@ -183,7 +183,7 @@ export class TeamService {
           members: {
             some: {
               user: {
-                discordId,
+                id: discordId,
               },
             },
           },
@@ -213,7 +213,7 @@ export class TeamService {
             create: {
               user: {
                 connect: {
-                  discordId: userId,
+                  id: userId,
                 },
               },
             },
@@ -237,7 +237,7 @@ export class TeamService {
       await prisma.teamMember.deleteMany({
         where: {
           user: {
-            discordId: userId,
+            id: userId,
           },
         },
       });

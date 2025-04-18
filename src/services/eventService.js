@@ -205,7 +205,7 @@ export class EventService {
           participants: {
             some: {
               user: {
-                discordId,
+                id: discordId,
               },
               status: 'REGISTERED',
             },
@@ -236,7 +236,7 @@ export class EventService {
           status: 'REGISTERED',
           rsn: rsn?.toLocaleLowerCase(),
           note: duo?.toLocaleLowerCase(),
-          user: { connect: { discordId } },
+          user: { connect: { id: discordId } },
           event: { connect: { id: activeEvent.id } },
         },
       });

@@ -10,13 +10,13 @@ export class UserService {
   static async syncUser(member) {
     try {
       const existingUser = await prisma.discordUser.findUnique({
-        where: { discordId: member.id },
+        where: { id: member.id },
       });
 
       if (!existingUser) {
         return await prisma.discordUser.create({
           data: {
-            discordId: member.id,
+            id: member.id,
             username: member.user.username,
             discriminator: member.user.discriminator,
             avatar: member.user.avatarURL(),
@@ -27,7 +27,7 @@ export class UserService {
         });
       } else {
         return await prisma.discordUser.update({
-          where: { discordId: member.id },
+          where: { id: member.id },
           data: {
             username: member.user.username,
             discriminator: member.user.discriminator,
