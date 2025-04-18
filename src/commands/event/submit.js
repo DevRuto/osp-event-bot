@@ -10,7 +10,9 @@ import {
 import { ConfigService } from '#services/configService.js';
 import { EventService } from '#services/eventService.js';
 import { TeamService } from '#services/teamService.js';
+import { SubmissionService } from '#services/submissionService.js';
 import logger from '#utils/logger.js';
+import { formatValueOutput } from '#utils/format.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
@@ -84,13 +86,13 @@ export async function execute(interaction) {
     });
     return;
   }
-  if (activeEvent.status !== 'ONGOING') {
-    await interaction.reply({
-      content: 'The event is not active. Please check back later.',
-      flags: MessageFlags.Ephemeral,
-    });
-    return;
-  }
+  // if (activeEvent.status !== 'ONGOING') {
+  //   await interaction.reply({
+  //     content: 'The event is not active. Please check back later.',
+  //     flags: MessageFlags.Ephemeral,
+  //   });
+  //   return;
+  // }
 
   const name = interaction.options.getString('name');
   const value = interaction.options.getString('value');
@@ -102,16 +104,28 @@ export async function execute(interaction) {
     await interaction.reply('Please provide an image or attachment as proof of the item.');
     return;
   }
-
-  logger.info(`Item submitted: ${name} - ${value}`);
-  await interaction.reply(`Item submitted: ${name} - ${value}`);
+  let submission;
+  try {
+    submission = await SubmissionService.addSubmission(interaction.user.id, name, value, proof);
+    logger.info(`Item submitted: ${name} - ${formatValueOutput(parseInt(submission.value))}`);
+    await interaction.reply(
+      `Item submitted: ${name} - ${formatValueOutput(parseInt(submission.value))}`
+    );
+  } catch (error) {
+    logger.error(error);
+    await interaction.reply(error.message);
+    return;
+  }
 
   // Forward the submission to the approval channel
   const embed = {
     title: 'New Item Submission',
-    description: `Name: ${name}\nValue: ${value}`,
+    description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
     image: { url: proof },
-    fields: [{ name: 'Status', value: 'Pending', inline: false }],
+    fields: [
+      { name: 'Status', value: 'Pending', inline: false },
+      { name: 'Proof', value: `[Click to view image](${attachment ? attachment.url : proof})` },
+    ],
     footer: { text: `Submitted by: ${interaction.user.tag}` },
   };
   if (attachment) {
@@ -119,12 +133,12 @@ export async function execute(interaction) {
   }
   // Create approve and deny buttons
   const approve = new ButtonBuilder()
-    .setCustomId('submission_approve_1234')
+    .setCustomId(`submission_approve_${submission.id}`)
     .setLabel('Approve')
     .setStyle(ButtonStyle.Success);
 
   const deny = new ButtonBuilder()
-    .setCustomId('submission_deny_1234')
+    .setCustomId(`submission_deny_${submission.id}`)
     .setLabel('Deny')
     .setStyle(ButtonStyle.Danger);
 
