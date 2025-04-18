@@ -26,7 +26,7 @@ export async function execute(interaction) {
 
   // Check if the user is already in the team
   const team = await TeamService.getTeamById(teamId);
-  const isMember = team.members.some((member) => member.user.discordId === member.id);
+  const isMember = team.members.some((member) => member.user.id === member.id);
   if (isMember) {
     await interaction.reply('This user is already a member of the team.');
     return;

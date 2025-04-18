@@ -30,13 +30,13 @@ export async function execute(interaction) {
     title: team.name,
     description: team.description,
     fields: [
-      { name: 'Leader', value: `<@${team.leader.discordId}>`, inline: true },
+      { name: 'Leader', value: `<@${team.leader.id}>`, inline: true },
       {
         name: 'Members',
         value:
           team.members
-            .filter((member) => member.user.discordId !== team.leader.discordId)
-            .map((member, index) => `${index + 1}. <@${member.user.discordId}>`)
+            .filter((member) => member.user.id !== team.leader.id)
+            .map((member, index) => `${index + 1}. <@${member.user.id}>`)
             .join('\n') || 'None',
         inline: false,
       },
