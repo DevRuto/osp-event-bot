@@ -1,11 +1,11 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
+import { ChatInputCommandInteraction, PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { TeamService } from '#services/teamService.js';
-import { ConfigService } from '#services/configService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('create-team')
   .setDescription('Create a team')
+  .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
   .addUserOption((option) =>
     option.setName('leader').setDescription('The team leader').setRequired(true)
   )
@@ -20,25 +20,17 @@ export const data = new SlashCommandBuilder()
  * @param {ChatInputCommandInteraction} interaction
  */
 export async function execute(interaction) {
-  if (!interaction.member.permissions.has('Administrator')) {
-    const customRole = await ConfigService.getAdminRole(interaction.guildId);
-    if (customRole) {
-      const member = await interaction.guild.members.fetch(interaction.user.id);
-      if (!member.roles.cache.has(customRole)) {
-        await interaction.reply('You do not have permission to set the approval channel.');
-        return;
-      }
-    } else {
-      await interaction.reply('You do not have permission to set the approval channel.');
-      return;
-    }
-  }
   const leader = interaction.options.getUser('leader');
   const name = interaction.options.getString('name');
   const description = interaction.options.getString('description');
 
   try {
-    await TeamService.createTeam(leader.id, name, description);
+    if (TeamService.isUserInTeam(leader.id)) {
+      await interaction.reply(`User <@${leader.id}> is already in a team.`);
+      return;
+    }
+    const team = await TeamService.createTeam(leader.id, name, description);
+    await TeamService.addMemberToTeam(team.id, leader.id); // Add the leader to their own team
     await interaction.reply(`Team "${name}" (Leader: ${leader.tag}) created successfully!`);
     logger.info(`Team "${name}" created successfully by ${interaction.user.tag}`);
   } catch (error) {

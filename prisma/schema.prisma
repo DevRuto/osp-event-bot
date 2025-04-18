@@ -33,6 +33,7 @@ model Event {
   startDate   DateTime
   endDate     DateTime?
   status      String    @default("PLANNED") // PLANNED, ONGOING, COMPLETED, CANCELLED
+  active      Boolean   @default(false)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -71,14 +72,15 @@ model TeamMember {
 }
 
 model EventParticipant {
-  id      String      @id @default(uuid())
   userId  String
   eventId String
+  rsn     String? // Registered in-game name
+  note    String?
   status  String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
-  user    DiscordUser @relation(fields: [userId], references: [id])
+  user    DiscordUser @relation(fields: [userId], references: [discordId])
   event   Event       @relation(fields: [eventId], references: [id])
 
-  @@unique([userId, eventId])
+  @@id([userId, eventId])
 }
 
 model Submission {

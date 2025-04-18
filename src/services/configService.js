@@ -69,41 +69,39 @@ export class ConfigService {
   }
 
   /**
-   * Get the admin role for a guild
-   * @param {String} guildId - A Discord guild ID
-   * @returns {Promise<String>} The admin role ID
+   * Get the accepted channel for a guild
    */
-  static async getAdminRole(guildId) {
+  static async getAcceptedChannel(guildId) {
     try {
       const config = await prisma.config.findUnique({
         where: {
           guildId_settingType: {
             guildId,
-            settingType: SettingTypes.ADMIN_ROLE,
+            settingType: SettingTypes.ACCEPTED_CHANNEL,
           },
         },
       });
 
       return config?.value;
     } catch (error) {
-      logger.error(`Error getting admin role for guild ${guildId}:`, error);
+      logger.error(`Error getting accepted channel for guild ${guildId}:`, error);
       throw error;
     }
   }
 
   /**
-   * Set the admin role for a guild
+   * Set the accepted channel for a guild
    * @param {String} guildId - A Discord guild ID
-   * @param {String} roleId - The admin role ID
+   * @param {String} channelId - The accepted channel ID
    * @returns {Promise<void>}
    */
-  static async setAdminRole(guildId, roleId) {
+  static async setAcceptedChannel(guildId, channelId) {
     try {
       const existingConfig = await prisma.config.findUnique({
         where: {
           guildId_settingType: {
             guildId,
-            settingType: SettingTypes.ADMIN_ROLE,
+            settingType: SettingTypes.ACCEPTED_CHANNEL,
           },
         },
       });
@@ -113,22 +111,87 @@ export class ConfigService {
           where: {
             guildId_settingType: {
               guildId,
-              settingType: SettingTypes.ADMIN_ROLE,
+              settingType: SettingTypes.ACCEPTED_CHANNEL,
             },
           },
-          data: { value: roleId },
+          data: { value: channelId },
         });
       } else {
         await prisma.config.create({
           data: {
             guildId,
-            settingType: SettingTypes.ADMIN_ROLE,
-            value: roleId,
+            settingType: SettingTypes.ACCEPTED_CHANNEL,
+            value: channelId,
           },
         });
       }
     } catch (error) {
-      logger.error(`Error setting admin role for guild ${guildId}:`, error);
+      logger.error(`Error setting accepted channel for guild ${guildId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get the signed up channel for a guild
+   * @param {String} guildId - A Discord guild ID
+   * @returns {Promise<String>} The signed up channel ID
+   */
+  static async getSignedUpChannel(guildId) {
+    try {
+      const config = await prisma.config.findUnique({
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_CHANNEL,
+          },
+        },
+      });
+
+      return config?.value;
+    } catch (error) {
+      logger.error(`Error getting signed up channel for guild ${guildId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Set the signed up channel for a guild
+   * @param {String} guildId - A Discord guild ID
+   * @param {String} channelId - The signed up channel ID
+   * @returns {Promise<void>}
+   */
+  static async setSignedUpChannel(guildId, channelId) {
+    try {
+      const existingConfig = await prisma.config.findUnique({
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_CHANNEL,
+          },
+        },
+      });
+
+      if (existingConfig) {
+        await prisma.config.update({
+          where: {
+            guildId_settingType: {
+              guildId,
+              settingType: SettingTypes.SIGNED_UP_CHANNEL,
+            },
+          },
+          data: { value: channelId },
+        });
+      } else {
+        await prisma.config.create({
+          data: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_CHANNEL,
+            value: channelId,
+          },
+        });
+      }
+    } catch (error) {
+      logger.error(`Error setting signed up channel for guild ${guildId}:`, error);
       throw error;
     }
   }

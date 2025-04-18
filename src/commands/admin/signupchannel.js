@@ -8,13 +8,13 @@ import { ConfigService } from '#services/configService.js';
 import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
-  .setName('approvechannel')
-  .setDescription('Get or set the approval submission channel')
+  .setName('signupchannel')
+  .setDescription('Get or set the signed up channel')
   .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
   .addChannelOption((option) =>
     option
       .setName('channel')
-      .setDescription('Moderated channel for submissions to be forwarded to')
+      .setDescription('Channel to forward signups to')
       .setRequired(false)
       .addChannelTypes(ChannelType.GuildText)
   );
@@ -27,17 +27,17 @@ export async function execute(interaction) {
 
   // if channel doesn't exist, get current channel if it exists
   if (!channel) {
-    const currentChannel = await ConfigService.getApprovalChannel(interaction.guildId);
+    const currentChannel = await ConfigService.getSignedUpChannel(interaction.guildId);
     if (currentChannel) {
-      await interaction.reply(`Current approval channel: <#${currentChannel}>`);
+      await interaction.reply(`Current signed up channel: <#${currentChannel}>`);
     } else {
-      await interaction.reply('No approval channel set.');
+      await interaction.reply('No signed up channel set.');
     }
     return;
   }
 
-  // if channel exists, set it as the approval channel
-  await ConfigService.setApprovalChannel(interaction.guildId, channel.id);
-  await interaction.reply(`Approval channel set to <#${channel.id}>`);
-  logger.info(`Approval channel set to ${channel.id} for guild ${interaction.guildId}`);
+  // if channel exists, set it as the signed up channel
+  await ConfigService.setSignedUpChannel(interaction.guildId, channel.id);
+  await interaction.reply(`Signed up channel set to <#${channel.id}>`);
+  logger.info(`Signed up channel set to ${channel.id} for guild ${interaction.guildId}`);
 }

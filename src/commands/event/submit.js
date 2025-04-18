@@ -1,6 +1,16 @@
-import { ChannelType, ChatInputCommandInteraction, SlashCommandBuilder } from 'discord.js';
-import logger from '#utils/logger.js';
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from 'discord.js';
 import { ConfigService } from '#services/configService.js';
+import { EventService } from '#services/eventService.js';
+import { TeamService } from '#services/teamService.js';
+import logger from '#utils/logger.js';
 
 export const data = new SlashCommandBuilder()
   .setName('submit')
@@ -47,6 +57,41 @@ export async function execute(interaction) {
     }
   }
 
+  // Check if the user is registered for the event'
+  if (!(await EventService.isUserRegistered(interaction.user.id))) {
+    await interaction.reply({
+      content: 'You are not registered for the event. Please register first.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  // Check if user is part of a team
+  if (!(await TeamService.isUserInTeam(interaction.user.id))) {
+    await interaction.reply({
+      content: 'You are not part of a team. Please contact your team leader.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
+  // Check if the event has started
+  const activeEvent = await EventService.getActiveEvent();
+  if (!activeEvent) {
+    await interaction.reply({
+      content: 'There is no active event to submit items for.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+  if (activeEvent.status !== 'ONGOING') {
+    await interaction.reply({
+      content: 'The event is not active. Please check back later.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
+
   const name = interaction.options.getString('name');
   const value = interaction.options.getString('value');
   const image = interaction.options.getString('image');
@@ -59,10 +104,33 @@ export async function execute(interaction) {
   }
 
   logger.info(`Item submitted: ${name} - ${value}`);
-  await interaction.reply(`Item submitted: ${name} - ${value} - Proof type: ${proof}`);
+  await interaction.reply(`Item submitted: ${name} - ${value}`);
 
   // Forward the submission to the approval channel
+  const embed = {
+    title: 'New Item Submission',
+    description: `Name: ${name}\nValue: ${value}`,
+    image: { url: proof },
+    fields: [{ name: 'Status', value: 'Pending', inline: false }],
+    footer: { text: `Submitted by: ${interaction.user.tag}` },
+  };
+  if (attachment) {
+    embed.image.url = attachment.url;
+  }
+  // Create approve and deny buttons
+  const approve = new ButtonBuilder()
+    .setCustomId('submission_approve_1234')
+    .setLabel('Approve')
+    .setStyle(ButtonStyle.Success);
+
+  const deny = new ButtonBuilder()
+    .setCustomId('submission_deny_1234')
+    .setLabel('Deny')
+    .setStyle(ButtonStyle.Danger);
+
+  const row = new ActionRowBuilder().addComponents(approve, deny);
   await channel.send({
-    content: `New item submitted:\nName: ${name}\nValue: ${value}\nProof: ${proof}`,
+    embeds: [embed],
+    components: [row],
   });
 }

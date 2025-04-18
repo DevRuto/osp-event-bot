@@ -7,7 +7,7 @@ export class TeamService {
    * @param {String} leaderId - (Optional) The ID of the team leader
    * @param {String} name - The name of the team
    * @param {String} description - The description of the team
-   * @returns {Promise<void>}
+   * @returns {Promise<import('@prisma/client').Team>} The created team object
    */
   static async createTeam(leaderId, name, description) {
     // Validate inputs
@@ -16,7 +16,7 @@ export class TeamService {
     }
     // Create the team
     try {
-      await prisma.team.create({
+      return await prisma.team.create({
         data: {
           name,
           description,
@@ -68,17 +68,33 @@ export class TeamService {
       throw error;
     }
   }
+  /**
+   * @typedef {import('@prisma/client').Team & {
+   *   leader: import('@prisma/client').DiscordUser,
+   *   members: (import('@prisma/client').TeamMember & {
+   *     user: import('@prisma/client').DiscordUser
+   *   })[]
+   * }} TeamWithDetails
+   */
 
   /**
    * Get a team by ID
    * @param {String} teamId - The ID of the team
-   * @returns {Promise<import('@prisma/client').Team>} The team object
+   * @returns {Promise<TeamWithDetails>} The team object
    */
   static async getTeamById(teamId) {
     try {
       const team = await prisma.team.findUnique({
         where: {
           id: teamId,
+        },
+        include: {
+          leader: true,
+          members: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
       if (!team) {
@@ -90,6 +106,40 @@ export class TeamService {
       throw error;
     }
   }
+
+  /**
+   * Get current team of a user
+   * @param {String} discordId - The ID of the user
+   * @returns {Promise<TeamWithDetails>} The team object
+   */
+  static async getCurrentTeam(discordId) {
+    try {
+      const team = await prisma.team.findFirst({
+        where: {
+          members: {
+            some: {
+              user: {
+                discordId,
+              },
+            },
+          },
+        },
+        include: {
+          leader: true,
+          members: {
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+      return team;
+    } catch (error) {
+      logger.error('Error getting current team', error);
+      throw error;
+    }
+  }
+
   /**
    * Update a team by ID
    * @param {String} teamId - The ID of the team
@@ -118,6 +168,81 @@ export class TeamService {
       });
     } catch (error) {
       logger.error('Error updating team', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Check if a user is in a team
+   * @param {String} discordId - The discord Id of the user
+   */
+  static async isUserInTeam(discordId) {
+    try {
+      const team = await prisma.team.findFirst({
+        where: {
+          members: {
+            some: {
+              user: {
+                discordId,
+              },
+            },
+          },
+        },
+      });
+      return !!team;
+    } catch (error) {
+      logger.error('Error checking if user is in team', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Add a member to a team
+   * @param {String} teamId - The ID of the team
+   * @param {String} userId - The ID of the user
+   * @returns {Promise<void>}
+   */
+  static async addMemberToTeam(teamId, userId) {
+    try {
+      return await prisma.team.update({
+        where: {
+          id: teamId,
+        },
+        data: {
+          members: {
+            create: {
+              user: {
+                connect: {
+                  discordId: userId,
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      logger.error('Error adding member to team', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Remove member from all teams
+   * @param {String} userId - The ID of the user
+   * @returns {Promise<void>}
+   */
+  static async removeMemberFromAllTeams(userId) {
+    try {
+      await prisma.teamMember.deleteMany({
+        where: {
+          user: {
+            discordId: userId,
+          },
+        },
+      });
+    } catch (error) {
+      logger.error('Error removing member from all teams', error);
       throw error;
     }
   }
