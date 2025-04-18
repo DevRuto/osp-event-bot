@@ -8,8 +8,7 @@ datasource db {
 }
 
 model DiscordUser {
-  id            String   @id @default(uuid())
-  discordId     String   @unique
+  id            String   @id
   username      String
   discriminator String?
   avatar        String?
@@ -24,6 +23,7 @@ model DiscordUser {
   events      EventParticipant[]
   teamsLed    Team[] // Teams where this user is the leader
   submissions Submission[]
+  approver    Submission[]       @relation("Approver")
 }
 
 model Event {
@@ -77,14 +77,14 @@ model EventParticipant {
   rsn     String? // Registered in-game name
   note    String?
   status  String      @default("REGISTERED") // REGISTERED, INTERESTED, UNPAID
-  user    DiscordUser @relation(fields: [userId], references: [discordId])
+  user    DiscordUser @relation(fields: [userId], references: [id])
   event   Event       @relation(fields: [eventId], references: [id])
 
   @@id([userId, eventId])
 }
 
 model Submission {
-  id        String   @id @default(uuid())
+  id        Int      @id @default(autoincrement())
   name      String // Name of the submitted item
   value     String // Value of the submitted item
   proofUrl  String // URL to the proof image
@@ -93,12 +93,14 @@ model Submission {
   updatedAt DateTime @updatedAt
 
   // Relations
-  userId  String // ID of the user who submitted
-  eventId String // ID of the event this submission is for
-  teamId  String // ID of the team this submission belongs to
-  user    DiscordUser @relation(fields: [userId], references: [id])
-  event   Event       @relation(fields: [eventId], references: [id])
-  team    Team        @relation(fields: [teamId], references: [id])
+  userId     String // ID of the user who submitted
+  eventId    String // ID of the event this submission is for
+  teamId     String // ID of the team this submission belongs to
+  approverId String? // ID of the user who approved/rejected the submission
+  approver   DiscordUser? @relation("Approver", fields: [approverId], references: [id])
+  user       DiscordUser  @relation(fields: [userId], references: [id])
+  event      Event        @relation(fields: [eventId], references: [id])
+  team       Team         @relation(fields: [teamId], references: [id])
 
   @@index([userId])
   @@index([eventId])
