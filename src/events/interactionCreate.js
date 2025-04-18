@@ -1,5 +1,6 @@
 import { Events, MessageFlags, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
 import { ConfigService } from '#services/configService.js';
+import { SubmissionService } from '#services/submissionService.js';
 import logger from '#utils/logger.js';
 
 export const name = Events.InteractionCreate;
@@ -48,7 +49,16 @@ export async function execute(interaction) {
     );
 
     // TODO: Update db with the action and id
-
+    try {
+      if (action === 'approve') {
+        await SubmissionService.approveSubmission(id);
+      } else {
+        await SubmissionService.rejectSubmission(id);
+      }
+    } catch (error) {
+      logger.error(error);
+      return;
+    }
     // Update embed to include approval status
     const originalEmbed = interaction.message.embeds[0];
     if (!originalEmbed) return;

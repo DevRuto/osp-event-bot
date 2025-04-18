@@ -62,19 +62,32 @@ export class SubmissionService {
   static async approveSubmission(submissionId, approverId) {
     try {
       const submission = await prisma.submission.update({
-        where: { id: submissionId },
+        where: { id: parseInt(submissionId) },
         data: {
           status: 'APPROVED',
-          approver: {
-            connect: {
-              id: approverId,
-            },
-          },
+          approverId,
         },
       });
       return submission;
     } catch (error) {
-      logger.error(`Error approving submission ${submissionId}:`, error);
+      console.error(error);
+      throw new Error(`Error approving submission ${submissionId}: ${JSON.stringify(error)}`);
+    }
+  }
+
+  static async rejectSubmission(submissionId, approverId) {
+    try {
+      const submission = await prisma.submission.update({
+        where: { id: parseInt(submissionId) },
+        data: {
+          status: 'REJECTED',
+          approverId,
+        },
+      });
+      return submission;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error rejecting submission ${submissionId}: ${JSON.stringify(error)}`);
     }
   }
 }
