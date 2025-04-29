@@ -67,6 +67,16 @@ export async function execute(interaction) {
         }
       }
     }
+    const signedUpRole = await ConfigService.getSignedUpRole(interaction.guildId);
+    if (signedUpRole) {
+      const member = await interaction.guild.members.fetch(interaction.user.id);
+      await member.roles.add(signedUpRole);
+      logger.info(
+        `Added signed up role ${signedUpRole} to user ${interaction.user.username} (${interaction.user.id})`
+      );
+    } else {
+      logger.warn(`No signed up role set for guild ${interaction.guildId}`);
+    }
   } catch (error) {
     console.log(error);
     logger.error('Error registering user to event', error);
