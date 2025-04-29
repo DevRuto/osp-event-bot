@@ -44,7 +44,6 @@ export async function execute(interaction) {
       logger.info(
         `User ${interaction.user.username} (${interaction.user.id}) updated their RSN to ${rsn} for event ${activeEvent.name}`
       );
-      return;
     } else {
       await EventService.registerUserToEvent(interaction.user.id, rsn, duo);
       await interaction.reply({
@@ -64,18 +63,31 @@ export async function execute(interaction) {
             content: `<@${interaction.user.id}> has registered for the event with RSN: ${rsn}. ${duo ? `With duo partner: ${duo}` : ''}`,
             allowedMentions: { parse: [] },
           });
+          logger.info(
+            `Sent registration message to channel ${signedUpChannel} for user ${interaction.user.username} (${interaction.user.id})`
+          );
+        } else {
+          logger.warn(`Signed up channel ${signedUpChannel} not found or not a text channel`);
         }
+      } else {
+        logger.warn(`No signed up channel set for guild ${interaction.guildId}`);
       }
     }
-    const signedUpRole = await ConfigService.getSignedUpRole(interaction.guildId);
-    if (signedUpRole) {
-      const member = await interaction.guild.members.fetch(interaction.user.id);
-      await member.roles.add(signedUpRole);
-      logger.info(
-        `Added signed up role ${signedUpRole} to user ${interaction.user.username} (${interaction.user.id})`
+    try {
+      const signedUpRole = await ConfigService.getSignedUpRole(interaction.guildId);
+      if (signedUpRole) {
+        const member = await interaction.guild.members.fetch(interaction.user.id);
+        await member.roles.add(signedUpRole);
+        logger.info(
+          `Added signed up role ${signedUpRole} to user ${interaction.user.username} (${interaction.user.id})`
+        );
+      } else {
+        logger.warn(`No signed up role set for guild ${interaction.guildId}`);
+      }
+    } catch {
+      logger.error(
+        `Failed to add signed up role to user ${interaction.user.username} (${interaction.user.id})`
       );
-    } else {
-      logger.warn(`No signed up role set for guild ${interaction.guildId}`);
     }
   } catch (error) {
     console.log(error);
