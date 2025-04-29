@@ -195,4 +195,69 @@ export class ConfigService {
       throw error;
     }
   }
+
+  /**
+   * Get Signed up role for a guild
+   * @param {String} guildId - A Discord guild ID
+   * @returns {Promise<String>} The signed up role ID
+   */
+  static async getSignedUpRole(guildId) {
+    try {
+      const config = await prisma.config.findUnique({
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_ROLE,
+          },
+        },
+      });
+
+      return config?.value;
+    } catch (error) {
+      logger.error(`Error getting signed up role for guild ${guildId}:`, error);
+      throw error;
+    }
+  }
+
+  /**
+   * Set the signed up role for a guild
+   * @param {String} guildId - A Discord guild ID
+   * @param {String} roleId - The signed up role ID
+   * @returns {Promise<void>}
+   */
+  static async setSignedUpRole(guildId, roleId) {
+    try {
+      const existingConfig = await prisma.config.findUnique({
+        where: {
+          guildId_settingType: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_ROLE,
+          },
+        },
+      });
+
+      if (existingConfig) {
+        await prisma.config.update({
+          where: {
+            guildId_settingType: {
+              guildId,
+              settingType: SettingTypes.SIGNED_UP_ROLE,
+            },
+          },
+          data: { value: roleId },
+        });
+      } else {
+        await prisma.config.create({
+          data: {
+            guildId,
+            settingType: SettingTypes.SIGNED_UP_ROLE,
+            value: roleId,
+          },
+        });
+      }
+    } catch (error) {
+      logger.error(`Error setting signed up role for guild ${guildId}:`, error);
+      throw error;
+    }
+  }
 }
