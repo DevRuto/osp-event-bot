@@ -124,7 +124,6 @@ app.post('/api/submit', async (req, res) => {
 });
 
 app.get('*a', (req, res) => {
-  logger.info('Serving submission form' + req.path);
   res.sendFile(path.resolve('./src/webapp/index.html'), (err) => {
     if (err) {
       res.status(500).send('Error loading the fallback page.');
