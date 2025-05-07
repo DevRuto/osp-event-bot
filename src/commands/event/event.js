@@ -38,6 +38,11 @@ export async function execute(interaction) {
         value: event.teams.map((team, index) => `${index + 1}. ${team.name}`).join('\n') || 'None',
         inline: false,
       },
+      {
+        name: 'Participant Count',
+        value: event.participants.length.toString() || 'None',
+        inline: true,
+      },
     ],
     color: getColorFromName(event.name),
   };
