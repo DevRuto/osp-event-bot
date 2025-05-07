@@ -81,6 +81,11 @@ export class EventService {
         },
         include: {
           teams: true,
+          participants: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
       if (!event) {
@@ -184,6 +189,11 @@ export class EventService {
         },
         include: {
           teams: true,
+          participants: {
+            include: {
+              user: true,
+            },
+          },
         },
       });
       return event;
