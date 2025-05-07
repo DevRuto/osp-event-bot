@@ -48,7 +48,12 @@ onMounted(async () => {
             <td class="p-2 border">
               <div class="flex items-center space-x-2">
                 <img :src="p.user.avatar" alt="avatar" class="w-6 h-6 rounded-full" />
-                <span>{{ p.user.username }}#{{ p.user.discriminator }}</span>
+                <span>
+                  {{ p.user.username
+                  }}<span v-if="p.user.discriminator && p.user.discriminator !== '0'"
+                    >#{{ p.user.discriminator }}</span
+                  >
+                </span>
               </div>
             </td>
             <td class="p-2 border">{{ p.rsn || '—' }}</td>
