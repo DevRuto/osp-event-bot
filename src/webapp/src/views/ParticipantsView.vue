@@ -31,7 +31,9 @@ onMounted(async () => {
       <p class="mb-4">Start Date: {{ new Date(event.startDate).toLocaleString() }}</p>
       <p class="mb-4" v-if="event.description">{{ event.description }}</p>
 
-      <h2 class="text-xl font-semibold mt-8 mb-2">Participants</h2>
+      <h2 class="text-xl font-semibold mt-8 mb-2">
+        Participants ({{ event.participants.length }})
+      </h2>
       <table class="w-full text-left border border-gray-300">
         <thead class="bg-gray-100">
           <tr>
