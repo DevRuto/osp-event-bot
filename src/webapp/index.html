@@ -1,79 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Item Submission</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-  <div id="app" class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
-    <h1 class="text-2xl font-bold mb-4 text-center">Item Submission</h1>
-    <form @submit.prevent="submitForm" class="space-y-4">
-      <div>
-        <label class="block text-sm font-medium text-gray-700">RSN (RuneScape Name)</label>
-        <input v-model="form.rsn" type="text" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Item Name</label>
-        <input v-model="form.name" type="text" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Value</label>
-        <input v-model="form.value" type="text" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-      </div>
-      <div>
-        <label class="block text-sm font-medium text-gray-700">Proof Image URL</label>
-        <input v-model="form.proof" type="url" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500" />
-      </div>
-      <button type="submit" class="w-full py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700">Submit</button>
-    </form>
-    <p v-if="success" class="mt-4 text-green-600 font-medium text-center">Submitted successfully!</p>
-    <p v-if="error" class="mt-4 text-red-600 font-medium text-center">Submission failed. Try again.</p>
-  </div>
-
-  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-  <script>
-    const { createApp } = Vue;
-
-    createApp({
-      data() {
-        return {
-          form: {
-            rsn: '',
-            name: '',
-            value: '',
-            proof: ''
-          },
-          success: false,
-          error: false
-        };
-      },
-      methods: {
-        async submitForm() {
-          this.success = false;
-          this.error = false;
-
-          try {
-            const response = await fetch('/api/submit', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(this.form)
-            });
-
-            if (!response.ok) throw new Error();
-
-            this.success = true;
-            this.form.rsn = '';
-            this.form.name = '';
-            this.form.value = '';
-            this.form.proof = '';
-          } catch (err) {
-            this.error = true;
-          }
-        }
-      }
-    }).mount('#app');
-  </script>
-</body>
+<html lang="">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vite App</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>
