@@ -307,4 +307,26 @@ export class EventService {
       throw error;
     }
   }
+
+  static async getUserDetailsByRsn(rsn) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.findFirst({
+        where: {
+          rsn: rsn?.toLocaleLowerCase(),
+          eventId: activeEvent.id,
+        },
+        include: {
+          user: true,
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error getting user details for ${rsn}:`, error);
+      throw error;
+    }
+  }
 }
