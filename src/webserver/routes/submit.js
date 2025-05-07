@@ -32,6 +32,7 @@ router.post('/submit', async (req, res) => {
   } catch (error) {
     logger.error('Error adding submission:', error);
     res.status(500).json({ error: 'Failed to create submission.', details: error.message });
+    return;
   }
   const approvalChannel = await ConfigService.getApprovalChannel(process.env.GUILD_ID);
 
@@ -46,7 +47,9 @@ router.post('/submit', async (req, res) => {
     ],
     footer: { text: `Submitted by: ${participant.user.username}` },
   };
-  embed.image.url = proof;
+  if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
+    embed.image.url = proof;
+  }
   // Create approve and deny buttons
   const approve = new ButtonBuilder()
     .setCustomId(`submission_approve_${submission.id}`)

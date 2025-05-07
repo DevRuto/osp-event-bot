@@ -4,6 +4,7 @@
       <div class="text-lg font-semibold">Ruto's Event</div>
       <div class="space-x-4">
         <RouterLink to="/" class="hover:text-gray-300">Home</RouterLink>
+        <RouterLink to="/participants" class="hover:text-gray-300">Participants</RouterLink>
         <RouterLink to="/submit" class="hover:text-gray-300">Submit</RouterLink>
       </div>
     </nav>

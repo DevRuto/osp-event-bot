@@ -10,6 +10,11 @@ const router = createRouter({
       component: HomeView,
     },
     {
+      path: '/participants',
+      name: 'participants',
+      component: () => import('../views/ParticipantsView.vue'),
+    },
+    {
       path: '/submit',
       name: 'submit',
       component: () => import('../views/SubmissionView.vue'),

@@ -10,15 +10,22 @@ const form = ref({
 })
 
 const successMessage = ref('')
+const errorMessage = ref('')
 
 async function submitForm() {
+  errorMessage.value = ''
   try {
     await axios.post('/api/submit', form.value)
     successMessage.value = 'Submission sent successfully!'
+    setTimeout(() => {
+      successMessage.value = ''
+    }, 3000) // Clear success message after 3 seconds
     form.value = { rsn: '', name: '', value: '', proof: '' }
   } catch (err) {
     console.error(err)
-    alert('Failed to submit. Please try again.')
+    errorMessage.value =
+      err.response?.data?.error + err.response?.data?.details ||
+      'Failed to submit. Please try again.'
   }
 }
 </script>
@@ -76,6 +83,10 @@ async function submitForm() {
         </button>
       </div>
 
+      <!-- Error and Success Messages -->
+      <div v-if="errorMessage" class="text-red-600 text-center mt-2">
+        {{ errorMessage }}
+      </div>
       <div v-if="successMessage" class="text-green-600 text-center mt-2">
         {{ successMessage }}
       </div>
