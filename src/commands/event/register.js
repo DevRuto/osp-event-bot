@@ -55,23 +55,23 @@ export async function execute(interaction) {
       logger.info(
         `User ${interaction.user.username} (${interaction.user.id}) registered for event ${activeEvent.name} with RSN ${rsn}`
       );
-      const signedUpChannel = await ConfigService.getSignedUpChannel(interaction.guildId);
-      if (signedUpChannel) {
-        const channel = await interaction.client.channels.fetch(signedUpChannel);
-        if (channel && channel.isTextBased()) {
-          await channel.send({
-            content: `<@${interaction.user.id}> has registered for the event with RSN: ${rsn}. ${duo ? `With duo partner: ${duo}` : ''}`,
-            allowedMentions: { parse: [] },
-          });
-          logger.info(
-            `Sent registration message to channel ${signedUpChannel} for user ${interaction.user.username} (${interaction.user.id})`
-          );
-        } else {
-          logger.warn(`Signed up channel ${signedUpChannel} not found or not a text channel`);
-        }
+    }
+    const signedUpChannel = await ConfigService.getSignedUpChannel(interaction.guildId);
+    if (signedUpChannel) {
+      const channel = await interaction.client.channels.fetch(signedUpChannel);
+      if (channel && channel.isTextBased()) {
+        await channel.send({
+          content: `<@${interaction.user.id}> has registered for the event with RSN: ${rsn}. ${duo ? `With duo partner: ${duo}` : ''}`,
+          allowedMentions: { parse: [] },
+        });
+        logger.info(
+          `Sent registration message to channel ${signedUpChannel} for user ${interaction.user.username} (${interaction.user.id})`
+        );
       } else {
-        logger.warn(`No signed up channel set for guild ${interaction.guildId}`);
+        logger.warn(`Signed up channel ${signedUpChannel} not found or not a text channel`);
       }
+    } else {
+      logger.warn(`No signed up channel set for guild ${interaction.guildId}`);
     }
     try {
       const signedUpRole = await ConfigService.getSignedUpRole(interaction.guildId);
