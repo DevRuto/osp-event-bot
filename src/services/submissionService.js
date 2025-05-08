@@ -1,11 +1,12 @@
 import prisma from '#utils/prisma.js';
 import { EventService } from '#services/eventService.js';
 import { TeamService } from '#services/teamService.js';
+import { ImageService } from '#services/imageService.js';
 import logger from '#utils/logger.js';
 import { parseValueInput } from '#utils/format.js';
 
 export class SubmissionService {
-  static async addSubmission(discordId, name, value, proofUrl) {
+  static async addSubmission(discordId, name, value, proofUrl, backup = true) {
     const event = await EventService.getActiveEvent();
     if (!event) {
       throw new Error('No active event found');
@@ -24,6 +25,15 @@ export class SubmissionService {
     if (duplicate) {
       throw new Error('That proof has already been submitted.');
     }
+
+    let backupImagePath;
+    if (backup) {
+      backupImagePath = await ImageService.backupImageUrl(proofUrl);
+      if (!backupImagePath) {
+        throw new Error('Unable to save the image. Make sure the URL is valid.');
+      }
+    }
+
     const parsedValue = parseValueInput(value);
     if (parsedValue === null) {
       throw new Error('Invalid value format. Use numbers with optional k, m, or b suffixes.');
@@ -35,6 +45,7 @@ export class SubmissionService {
           name,
           value: cappedValue + '',
           proofUrl,
+          backupUrl: backupImagePath,
           user: {
             connect: {
               id: discordId,

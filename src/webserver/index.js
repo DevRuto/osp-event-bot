@@ -8,10 +8,16 @@ import TeamLeaderboardRoute from './routes/teams.js';
 
 const app = express();
 app.use(express.json());
+
+// API routes
 app.use('/api', SubmissionRoute);
 app.use('/api', EventRoute);
 app.use('/api/leaderboard', TeamLeaderboardRoute);
 
+// Serve proof images
+app.use('/images', express.static(path.resolve('./images')));
+
+// Serve SPA
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, '..', 'webapp', 'dist')));

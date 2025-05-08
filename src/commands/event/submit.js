@@ -86,13 +86,13 @@ export async function execute(interaction) {
     });
     return;
   }
-  // if (activeEvent.status !== 'ONGOING') {
-  //   await interaction.reply({
-  //     content: 'The event is not active. Please check back later.',
-  //     flags: MessageFlags.Ephemeral,
-  //   });
-  //   return;
-  // }
+  if (activeEvent.status !== 'ONGOING') {
+    await interaction.reply({
+      content: 'The event is not active. Please check back later.',
+      flags: MessageFlags.Ephemeral,
+    });
+    return;
+  }
 
   const name = interaction.options.getString('name');
   const value = interaction.options.getString('value');
