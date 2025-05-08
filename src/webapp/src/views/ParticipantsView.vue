@@ -1,15 +1,45 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, onUnmounted } from 'vue'
 import axios from 'axios'
 
 const event = ref(null)
 const loading = ref(true)
 const error = ref('')
+const countdown = ref('')
+let interval
+
+function updateCountdown(startDate) {
+  const now = new Date()
+  const start = new Date(startDate)
+  const diff = start - now
+
+  if (diff <= 0) {
+    countdown.value = 'Event has started!'
+    clearInterval(interval)
+    return
+  }
+
+  const seconds = Math.floor((diff / 1000) % 60)
+  const minutes = Math.floor((diff / (1000 * 60)) % 60)
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24)
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+  countdown.value = [
+    days > 0 ? `${days}d` : '',
+    days > 0 || hours > 0 ? `${hours}h` : '',
+    days > 0 || hours > 0 || minutes > 0 ? `${minutes}m` : '',
+    `${seconds}s`,
+  ]
+    .filter(Boolean)
+    .join(' ')
+}
 
 onMounted(async () => {
   try {
     const { data } = await axios.get('/api/event')
     event.value = data
+    updateCountdown(data.startDate)
+    interval = setInterval(() => updateCountdown(data.startDate), 1000)
   } catch (err) {
     console.error(err)
     error.value = 'Failed to load event details.'
@@ -17,6 +47,8 @@ onMounted(async () => {
     loading.value = false
   }
 })
+
+onUnmounted(() => clearInterval(interval))
 </script>
 
 <template>
@@ -28,7 +60,10 @@ onMounted(async () => {
       <p class="text-gray-600 mb-4">
         Status: <strong>{{ event.status }}</strong>
       </p>
-      <p class="mb-4">Start Date: {{ new Date(event.startDate).toLocaleString() }}</p>
+      <p class="mb-2">Start Date: {{ new Date(event.startDate).toLocaleString() }}</p>
+      <p class="text-sm text-gray-700 mb-4">
+        Countdown: <span class="font-semibold">{{ countdown }}</span>
+      </p>
       <p class="mb-4" v-if="event.description">{{ event.description }}</p>
 
       <h2 class="text-xl font-semibold mt-8 mb-2">
