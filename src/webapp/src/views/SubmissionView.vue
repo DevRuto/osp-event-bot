@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import axios from 'axios'
 
 const form = ref({
@@ -28,6 +28,10 @@ async function submitForm() {
       'Failed to submit. Please try again.'
   }
 }
+
+const isFormValid = computed(() => {
+  return form.value.rsn && form.value.name && form.value.value && form.value.proof
+})
 </script>
 
 <template>
@@ -77,8 +81,22 @@ async function submitForm() {
         />
       </div>
 
+      <!-- Image preview if URL is valid -->
+      <div v-if="form.proof" class="mt-4 text-center">
+        <h2 class="text-md font-medium text-gray-800 mb-2">Image Preview</h2>
+        <img
+          :src="form.proof"
+          alt="Image Preview"
+          class="max-w-full h-auto rounded-md shadow-md border-2 border-gray-300"
+        />
+      </div>
+
       <div class="text-center">
-        <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700">
+        <button
+          type="submit"
+          :disabled="!isFormValid"
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+        >
           Submit
         </button>
       </div>
