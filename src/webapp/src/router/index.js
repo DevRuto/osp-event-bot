@@ -19,6 +19,11 @@ const router = createRouter({
       name: 'submit',
       component: () => import('../views/SubmissionView.vue'),
     },
+    {
+      path: '/teams',
+      name: 'teams',
+      component: () => import('../views/TeamLeaderboardView.vue'),
+    },
   ],
 })
 

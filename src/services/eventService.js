@@ -188,7 +188,15 @@ export class EventService {
           active: true,
         },
         include: {
-          teams: true,
+          teams: {
+            include: {
+              members: {
+                include: {
+                  user: true,
+                },
+              },
+            },
+          },
           participants: {
             include: {
               user: true,
@@ -326,6 +334,54 @@ export class EventService {
       return participant;
     } catch (error) {
       logger.error(`Error getting user details for ${rsn}:`, error);
+      throw error;
+    }
+  }
+
+  static async getActiveEventTeams() {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const teams = await prisma.team.findMany({
+        where: {
+          events: {
+            some: { id: activeEvent.id },
+          },
+        },
+        include: {
+          members: {
+            include: {
+              user: {
+                include: {
+                  events: {
+                    where: { eventId: activeEvent.id },
+                    select: {
+                      eventId: true,
+                      status: true,
+                      rsn: true,
+                      note: true,
+                    },
+                  },
+                  submissions: {
+                    where: {
+                      eventId: activeEvent.id,
+                    },
+                    select: {
+                      value: true,
+                      status: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+      return teams;
+    } catch (error) {
+      logger.error('Error getting active event teams', error);
       throw error;
     }
   }

@@ -4,11 +4,13 @@ import express from 'express';
 import logger from '#utils/logger.js';
 import SubmissionRoute from './routes/submit.js';
 import EventRoute from './routes/event.js';
+import TeamLeaderboardRoute from './routes/teams.js';
 
 const app = express();
 app.use(express.json());
 app.use('/api', SubmissionRoute);
 app.use('/api', EventRoute);
+app.use('/api/leaderboard', TeamLeaderboardRoute);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

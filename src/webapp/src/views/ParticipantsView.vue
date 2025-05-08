@@ -47,7 +47,13 @@ onMounted(async () => {
           <tr v-for="p in event.participants" :key="p.userId">
             <td class="p-2 border">
               <div class="flex items-center space-x-2">
-                <img :src="p.user.avatar" alt="avatar" class="w-6 h-6 rounded-full" />
+                <div
+                  v-if="!p.user.avatar"
+                  class="w-6 h-6 flex items-center justify-center bg-gray-300 text-xs font-bold rounded-full"
+                >
+                  {{ p.user.username.charAt(0).toUpperCase() }}
+                </div>
+                <img v-else :src="p.user.avatar" alt="avatar" class="w-6 h-6 rounded-full" />
                 <span>
                   {{ p.user.username
                   }}<span v-if="p.user.discriminator && p.user.discriminator !== '0'"
