@@ -88,6 +88,7 @@ model Submission {
   name      String // Name of the submitted item
   value     String // Value of the submitted item
   proofUrl  String // URL to the proof image
+  backupUrl String? // URL to the backup image (if any)
   status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
