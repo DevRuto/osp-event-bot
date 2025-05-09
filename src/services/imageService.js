@@ -10,13 +10,29 @@ export class ImageService {
         throw new Error(`Failed to fetch image: ${response.statusText}`);
       }
       const buffer = Buffer.from(await response.arrayBuffer());
-      const uniqueId = uuidv4();
+      const uniqueId = uuidv4().slice(0, 8);
       const fileExtension = imageUrl.split('.').pop();
       const fileName = `${uniqueId}.${fileExtension}`;
       const filePath = `./images/${fileName}`;
       await fs.mkdir('./images', { recursive: true });
       await fs.writeFile(filePath, buffer);
       logger.info(`Image ${imageUrl} backed up to ${filePath}`);
+      return `/images/${fileName}`;
+    } catch (error) {
+      logger.error('Error backing up image:', error);
+      throw error;
+    }
+  }
+
+  static async backupFile(file) {
+    try {
+      const uniqueId = uuidv4().slice(0, 8);
+      const fileExtension = file.originalname.split('.').pop();
+      const fileName = `${uniqueId}.${fileExtension}`;
+      const filePath = `./images/${fileName}`;
+      await fs.mkdir('./images', { recursive: true });
+      await fs.writeFile(filePath, file.buffer);
+      logger.info(`Image ${file.originalname} backed up to ${filePath}`);
       return `/images/${fileName}`;
     } catch (error) {
       logger.error('Error backing up image:', error);

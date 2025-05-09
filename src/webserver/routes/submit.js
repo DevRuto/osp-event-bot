@@ -9,7 +9,7 @@ import { formatValueOutput } from '#utils/format.js';
 
 const router = Router();
 router.post('/submit', async (req, res) => {
-  const { rsn, name, value, proof } = req.body;
+  const { rsn, name, value, proof, self } = req.body;
 
   if (!rsn || !name || !value || !proof) {
     return res.status(400).json({ error: 'Missing required fields' });
@@ -27,7 +27,13 @@ router.post('/submit', async (req, res) => {
   }
   let submission;
   try {
-    submission = await SubmissionService.addSubmission(participant.userId, name, value, proof);
+    submission = await SubmissionService.addSubmission(
+      participant.userId,
+      name,
+      value,
+      proof,
+      !self
+    );
     res.status(200).json(submission);
   } catch (error) {
     logger.error('Error adding submission:', error);

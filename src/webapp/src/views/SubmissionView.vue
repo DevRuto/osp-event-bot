@@ -7,6 +7,7 @@ const form = ref({
   name: '',
   value: '',
   proof: '',
+  self: false,
 })
 
 const successMessage = ref('')
@@ -19,8 +20,8 @@ async function submitForm() {
     successMessage.value = 'Submission sent successfully!'
     setTimeout(() => {
       successMessage.value = ''
-    }, 3000) // Clear success message after 3 seconds
-    form.value = { rsn: '', name: '', value: '', proof: '' }
+    }, 3000)
+    form.value = { rsn: '', name: '', value: '', proof: '', self: false }
   } catch (err) {
     console.error(err)
     errorMessage.value =
@@ -32,13 +33,32 @@ async function submitForm() {
 const isFormValid = computed(() => {
   return form.value.rsn && form.value.name && form.value.value && form.value.proof
 })
+
+// 👇 handle image file selection or paste
+async function handleImageUpload(event) {
+  const file = event.target.files?.[0] || event.clipboardData?.items?.[0]?.getAsFile?.()
+  if (file && file.type.startsWith('image/')) {
+    const formData = new FormData()
+    formData.append('image', file)
+
+    try {
+      const { data } = await axios.post('/api/image', formData)
+      form.value.proof = window.location.origin + data.path
+      form.value.self = true
+    } catch (err) {
+      console.error('Failed to upload image', err)
+      errorMessage.value = 'Image upload failed.'
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="max-w-xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-lg">
+  <div class="max-w-xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-lg" @paste="handleImageUpload">
     <h1 class="text-2xl font-bold mb-6 text-center">Submit Item</h1>
 
     <form @submit.prevent="submitForm" class="space-y-4">
+      <!-- RSN -->
       <div>
         <label class="block text-sm font-medium text-gray-700">RSN</label>
         <input
@@ -49,6 +69,7 @@ const isFormValid = computed(() => {
         />
       </div>
 
+      <!-- Item Name -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Item Name</label>
         <input
@@ -59,6 +80,7 @@ const isFormValid = computed(() => {
         />
       </div>
 
+      <!-- Item Value -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Item Value</label>
         <input
@@ -70,19 +92,31 @@ const isFormValid = computed(() => {
         />
       </div>
 
+      <!-- Image Proof URL -->
       <div>
         <label class="block text-sm font-medium text-gray-700">Image Proof URL</label>
         <input
           v-model="form.proof"
           type="url"
+          placeholder="Paste or upload a direct image link"
           required
-          placeholder="Must be a direct image link"
           class="w-full p-2 border border-gray-300 rounded-md"
         />
       </div>
 
-      <!-- Image preview if URL is valid -->
-      <div v-if="form.proof" class="mt-4 text-center">
+      <!-- Image File Upload -->
+      <div>
+        <label class="block text-sm font-medium text-gray-700">Upload Image</label>
+        <input
+          type="file"
+          accept="image/*"
+          @change="handleImageUpload"
+          class="w-full p-2 border border-gray-300 rounded-md"
+        />
+      </div>
+
+      <!-- Image Preview -->
+      <div v-if="form.proof" class="mt-4 text-center border border-gray-300 p-4 rounded">
         <h2 class="text-md font-medium text-gray-800 mb-2">Image Preview</h2>
         <img
           :src="form.proof"
@@ -91,6 +125,7 @@ const isFormValid = computed(() => {
         />
       </div>
 
+      <!-- Submit -->
       <div class="text-center">
         <button
           type="submit"
@@ -101,7 +136,7 @@ const isFormValid = computed(() => {
         </button>
       </div>
 
-      <!-- Error and Success Messages -->
+      <!-- Messages -->
       <div v-if="errorMessage" class="text-red-600 text-center mt-2">
         {{ errorMessage }}
       </div>
