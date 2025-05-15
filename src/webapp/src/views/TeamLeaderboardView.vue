@@ -45,9 +45,15 @@ function formatNumber(value) {
               class="w-10 h-10 rounded-full border border-gray-300"
               v-if="member.avatar"
             />
+            <div
+              v-else
+              class="w-10 h-10 flex items-center justify-center bg-gray-300 text-lg font-bold rounded-full"
+            >
+              {{ member.rsn.charAt(0).toUpperCase() }}
+            </div>
             <div class="flex-1">
               <div class="font-medium">
-                {{ member.username
+                {{ member.rsn
                 }}<span v-if="member.discriminator && member.discriminator !== '0'"
                   >#{{ member.discriminator }}</span
                 >
