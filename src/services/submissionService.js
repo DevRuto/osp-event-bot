@@ -5,6 +5,8 @@ import { ImageService } from '#services/imageService.js';
 import logger from '#utils/logger.js';
 import { parseValueInput } from '#utils/format.js';
 
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+
 export class SubmissionService {
   static async addSubmission(discordId, name, value, proofUrl, backup = true) {
     const event = await EventService.getActiveEvent();
@@ -44,8 +46,8 @@ export class SubmissionService {
         data: {
           name,
           value: cappedValue + '',
-          proofUrl,
-          backupUrl: backupImagePath,
+          proofUrl: backup ? `${BASE_URL}${backupImagePath}` : proofUrl,
+          backupUrl: proofUrl,
           user: {
             connect: {
               id: discordId,
