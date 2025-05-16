@@ -326,7 +326,6 @@ export class EventService {
         where: {
           rsn: {
             contains: rsn?.toLowerCase(),
-            mode: 'insensitive',
           },
           eventId: activeEvent.id,
         },
