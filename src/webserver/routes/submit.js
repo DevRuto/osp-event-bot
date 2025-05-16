@@ -40,6 +40,9 @@ router.post('/submit', async (req, res) => {
       proof,
       !self
     );
+    logger.info(
+      `Submission added by ${rsn}: ${submission.id} - ${submission.name} (${submission.value})`
+    );
     res.status(200).json(submission);
   } catch (error) {
     logger.error('Error adding submission:', error);
