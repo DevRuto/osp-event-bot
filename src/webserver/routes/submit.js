@@ -20,6 +20,12 @@ router.post('/submit', async (req, res) => {
     return res.status(400).json({ error: 'No active event found' });
   }
 
+  // Make sure event is within time
+  const now = new Date();
+  if (now < currentEvent.startDate || now > currentEvent.endDate) {
+    return res.status(400).json({ error: 'Event is not active' });
+  }
+
   // Try to find the participant
   const participant = await EventService.getUserDetailsByRsn(rsn);
   if (!participant) {
