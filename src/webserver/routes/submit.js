@@ -54,41 +54,47 @@ router.post('/submit', async (req, res) => {
   }
   const approvalChannel = await ConfigService.getApprovalChannel(process.env.GUILD_ID);
 
-  // Forward the submission to the approval channel
-  const embed = {
-    title: 'New Item Submission',
-    description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
-    image: { url: proof },
-    fields: [
-      { name: 'RSN', value: rsn, inline: true },
-      { name: 'Status', value: 'Pending', inline: false },
-      { name: 'Proof', value: `[Click to view image](${proof})` },
-    ],
-    footer: { text: `Submitted by: ${participant.user.username}` },
-  };
-  if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
-    embed.image.url = proof;
+  try {
+    // Forward the submission to the approval channel
+    const embed = {
+      title: 'New Item Submission',
+      description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
+      image: { url: proof },
+      fields: [
+        { name: 'RSN', value: rsn, inline: true },
+        { name: 'Status', value: 'Pending', inline: false },
+        { name: 'Proof', value: `[Click to view image](${proof})` },
+      ],
+      footer: { text: `Submitted by: ${participant.user.username}` },
+    };
+    if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
+      embed.image.url = proof;
+    }
+    // Create approve and deny buttons
+    const approve = new ButtonBuilder()
+      .setCustomId(`submission_approve_${submission.id}`)
+      .setLabel('Approve')
+      .setStyle(ButtonStyle.Success);
+
+    const deny = new ButtonBuilder()
+      .setCustomId(`submission_deny_${submission.id}`)
+      .setLabel('Deny')
+      .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder().addComponents(approve, deny);
+
+    const channel = await client.channels.fetch(approvalChannel);
+    await channel.send({
+      embeds: [embed],
+      components: [row],
+    });
+    res.status(200).json(submission);
+  } catch (error) {
+    logger.error('Error sending submission to approval channel: ' + error);
+    res
+      .status(500)
+      .json({ error: 'Failed to send submission to approval channel.', details: error.message });
   }
-  // Create approve and deny buttons
-  const approve = new ButtonBuilder()
-    .setCustomId(`submission_approve_${submission.id}`)
-    .setLabel('Approve')
-    .setStyle(ButtonStyle.Success);
-
-  const deny = new ButtonBuilder()
-    .setCustomId(`submission_deny_${submission.id}`)
-    .setLabel('Deny')
-    .setStyle(ButtonStyle.Danger);
-
-  const row = new ActionRowBuilder().addComponents(approve, deny);
-
-  const channel = await client.channels.fetch(approvalChannel);
-  await channel.send({
-    embeds: [embed],
-    components: [row],
-  });
-
-  res.status(200).json(submission);
 });
 
 export default router;
