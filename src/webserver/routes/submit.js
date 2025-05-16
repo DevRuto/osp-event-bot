@@ -47,7 +47,6 @@ router.post('/submit', async (req, res) => {
     logger.info(
       `Submission added by ${rsn}: ${submission.id} - ${submission.name} (${submission.value})`
     );
-    res.status(200).json(submission);
   } catch (error) {
     logger.error('Error adding submission: ' + error);
     res.status(500).json({ error: 'Failed to create submission.', details: error.message });
@@ -88,6 +87,8 @@ router.post('/submit', async (req, res) => {
     embeds: [embed],
     components: [row],
   });
+
+  res.status(200).json(submission);
 });
 
 export default router;
