@@ -63,12 +63,12 @@ router.post('/submit', async (req, res) => {
       fields: [
         { name: 'RSN', value: rsn, inline: true },
         { name: 'Status', value: 'Pending', inline: false },
-        { name: 'Proof', value: `[Click to view image](${proof})` },
+        { name: 'Proof', value: `[Click to view image](${submission.proofUrl})` },
       ],
       footer: { text: `Submitted by: ${participant.user.username}` },
     };
     if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
-      embed.image.url = proof;
+      embed.image.url = submission.proofUrl;
     }
     // Create approve and deny buttons
     const approve = new ButtonBuilder()
