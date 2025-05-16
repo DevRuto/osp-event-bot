@@ -45,7 +45,7 @@ router.post('/submit', async (req, res) => {
     );
     res.status(200).json(submission);
   } catch (error) {
-    logger.error('Error adding submission:', error);
+    logger.error('Error adding submission: ' + error);
     res.status(500).json({ error: 'Failed to create submission.', details: error.message });
     return;
   }

@@ -10,6 +10,8 @@ const form = ref({
   self: false,
 })
 
+const inputFile = ref(null);
+
 const selectedImageFile = ref(null)
 const successMessage = ref('')
 const errorMessage = ref('')
@@ -39,7 +41,7 @@ async function submitForm() {
 
   try {
     // Upload image if selected but not yet uploaded
-    if (selectedImageFile.value && !form.value.self) {
+    if (selectedImageFile.value && form.value.self) {
       const formData = new FormData()
       formData.append('image', selectedImageFile.value)
 
@@ -56,6 +58,7 @@ async function submitForm() {
     // Reset form
     form.value = { rsn: '', name: '', value: '', proof: '', self: false }
     selectedImageFile.value = null
+    inputFile.value.value = ''
   } catch (err) {
     console.error(err)
     errorMessage.value =
@@ -142,6 +145,7 @@ function clearImage() {
       <div>
         <label class="block text-sm font-medium text-gray-700">Upload or Paste Image</label>
         <input
+          ref="inputFile"
           type="file"
           accept="image/*"
           @change="handleImageUpload"

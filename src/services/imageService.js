@@ -11,7 +11,9 @@ export class ImageService {
       }
       const buffer = Buffer.from(await response.arrayBuffer());
       const uniqueId = uuidv4().slice(0, 8);
-      const fileExtension = imageUrl.split('.').pop();
+      const pathname = new URL(imageUrl).pathname; // strips query params
+      const lastSegment = pathname.split('/').pop(); // get filename
+      const fileExtension = lastSegment.includes('.') ? lastSegment.split('.').pop() : null;
       const fileName = `${uniqueId}.${fileExtension}`;
       const filePath = `./images/${fileName}`;
       await fs.mkdir('./images', { recursive: true });
