@@ -324,7 +324,10 @@ export class EventService {
       }
       const participant = await prisma.eventParticipant.findFirst({
         where: {
-          rsn: rsn?.toLocaleLowerCase(),
+          rsn: {
+            contains: rsn?.toLowerCase(),
+            mode: 'insensitive',
+          },
           eventId: activeEvent.id,
         },
         include: {
