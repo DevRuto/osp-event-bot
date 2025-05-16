@@ -11,6 +11,10 @@ const router = Router();
 router.post('/submit', async (req, res) => {
   const { rsn, name, value, proof, self } = req.body;
 
+  if (proof.startsWith('blob:')) {
+    return res.status(400).json({ error: 'Please refresh the page and try again' });
+  }
+
   if (!rsn || !name || !value || !proof) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
