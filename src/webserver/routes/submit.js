@@ -57,6 +57,7 @@ router.post('/submit', async (req, res) => {
     description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
     image: { url: proof },
     fields: [
+      { name: 'RSN', value: rsn, inline: true },
       { name: 'Status', value: 'Pending', inline: false },
       { name: 'Proof', value: `[Click to view image](${proof})` },
     ],
