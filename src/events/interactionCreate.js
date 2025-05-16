@@ -48,6 +48,8 @@ export async function execute(interaction) {
       `Button clicked: ${action} - ${id} by ${interaction.user.username} (${interaction.user.id})`
     );
 
+    const currentSubmission = await SubmissionService.getSubmission(id);
+
     // TODO: Update db with the action and id
     try {
       if (action === 'approve') {
@@ -78,8 +80,8 @@ export async function execute(interaction) {
     embed.setFields(fields);
     await interaction.update({ embeds: [embed] });
 
-    // If approved, submit to accepted channel
-    if (action === 'approve') {
+    // If approved, submit to accepted channel if not already set to approved
+    if (action === 'approve' && currentSubmission.status !== 'APPROVED') {
       const acceptedChannelId = await ConfigService.getAcceptedChannel(interaction.guildId);
       if (!acceptedChannelId) return;
       const acceptedChannel = await interaction.client.channels.fetch(acceptedChannelId);

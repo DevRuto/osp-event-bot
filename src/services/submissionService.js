@@ -101,4 +101,16 @@ export class SubmissionService {
       throw new Error(`Error rejecting submission ${submissionId}: ${JSON.stringify(error)}`);
     }
   }
+
+  static async getSubmission(submissionId) {
+    try {
+      const submission = await prisma.submission.findUnique({
+        where: { id: parseInt(submissionId) },
+      });
+      return submission;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error getting submission ${submissionId}: ${JSON.stringify(error)}`);
+    }
+  }
 }
