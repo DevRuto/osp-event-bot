@@ -31,7 +31,7 @@ router.post('/submit', async (req, res) => {
   }
 
   // Try to find the participant
-  const participant = await EventService.getUserDetailsByRsn(rsn);
+  const participant = await EventService.getUserDetailsByRsn(rsn.trim());
   if (!participant) {
     return res.status(400).json({ error: 'Participant not found' });
   }
