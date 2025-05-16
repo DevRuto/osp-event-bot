@@ -14,7 +14,7 @@ export class ImageService {
       const pathname = new URL(imageUrl).pathname; // strips query params
       const lastSegment = pathname.split('/').pop(); // get filename
       const fileExtension = lastSegment.includes('.') ? lastSegment.split('.').pop() : null;
-      const fileName = `${uniqueId}.${fileExtension}`;
+      const fileName = `${uniqueId}.${fileExtension || 'png'}`; // default to png if no extension
       const filePath = `./images/${fileName}`;
       await fs.mkdir('./images', { recursive: true });
       await fs.writeFile(filePath, buffer);
