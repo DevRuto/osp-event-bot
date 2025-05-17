@@ -88,7 +88,7 @@ export async function execute(interaction) {
     // Disable the button that was clicked
     const row = ActionRowBuilder.from(interaction.message.components[0]);
     for (const component of row.components) {
-      if (component.customId === interaction.customId) {
+      if (component.data.custom_id === interaction.customId) {
         component.setDisabled(true);
       } else {
         component.setDisabled(false);
