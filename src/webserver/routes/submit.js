@@ -84,10 +84,14 @@ router.post('/submit', async (req, res) => {
     const row = new ActionRowBuilder().addComponents(approve, deny);
 
     const channel = await client.channels.fetch(approvalChannel);
-    await channel.send({
+    const sentMessage = await channel.send({
       embeds: [embed],
       components: [row],
     });
+
+    await sentMessage.react('👍');
+    await sentMessage.react('👎');
+
     res.status(200).json(submission);
   } catch (error) {
     logger.error('Error sending submission to approval channel: ' + error);
