@@ -1,4 +1,10 @@
-import { Events, MessageFlags, ChatInputCommandInteraction, EmbedBuilder } from 'discord.js';
+import {
+  Events,
+  MessageFlags,
+  ChatInputCommandInteraction,
+  EmbedBuilder,
+  ActionRowBuilder,
+} from 'discord.js';
 import { ConfigService } from '#services/configService.js';
 import { SubmissionService } from '#services/submissionService.js';
 import logger from '#utils/logger.js';
@@ -78,7 +84,17 @@ export async function execute(interaction) {
       fields[index].value = `${action} by <@${interaction.user.id}>`;
     }
     embed.setFields(fields);
-    await interaction.update({ embeds: [embed] });
+
+    // Disable the button that was clicked
+    const row = ActionRowBuilder.from(interaction.message.components[0]);
+    for (const component of row.components) {
+      if (component.customId === interaction.customId) {
+        component.setDisabled(true);
+      } else {
+        component.setDisabled(false);
+      }
+    }
+    await interaction.update({ embeds: [embed], components: [row] });
 
     // If approved, submit to accepted channel if not already set to approved
     if (action === 'approve' && currentSubmission.status !== 'APPROVED') {
