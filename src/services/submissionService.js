@@ -28,6 +28,12 @@ export class SubmissionService {
       throw new Error('That proof has already been submitted.');
     }
 
+    const parsedValue = parseValueInput(value);
+    if (parsedValue === null) {
+      throw new Error('Invalid value format. Use numbers with optional k, m, or b suffixes.');
+    }
+    const cappedValue = Math.min(parsedValue, 200_000_000);
+
     let backupImagePath;
     if (backup) {
       backupImagePath = await ImageService.backupImageUrl(proofUrl);
@@ -36,11 +42,6 @@ export class SubmissionService {
       }
     }
 
-    const parsedValue = parseValueInput(value);
-    if (parsedValue === null) {
-      throw new Error('Invalid value format. Use numbers with optional k, m, or b suffixes.');
-    }
-    const cappedValue = Math.min(parsedValue, 200_000_000);
     try {
       const submission = await prisma.submission.create({
         data: {
