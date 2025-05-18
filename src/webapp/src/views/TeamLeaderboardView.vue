@@ -22,32 +22,43 @@ function formatNumber(value) {
 </script>
 
 <template>
-  <div class="max-w-5xl mx-auto p-6 mt-10">
+  <div
+    class="max-w-5xl mx-auto p-6 mt-10 text-black dark:text-white transition-colors duration-300"
+  >
     <h1 class="text-3xl font-bold text-center mb-8">Team Leaderboard</h1>
 
     <div class="text-xl text-center font-semibold mb-6">
-      Total GP Earned: <span class="text-green-600">{{ formatNumber(globalTotal) }} GP</span>
+      Total GP Earned:
+      <span class="text-green-600 dark:text-green-400">{{ formatNumber(globalTotal) }} GP</span>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
-      <div v-for="team in teams" :key="team.id" class="bg-white shadow rounded-xl p-5 border">
-        <h2 class="text-2xl font-semibold mb-3 text-blue-700">{{ team.name }}</h2>
-        <div class="text-gray-700 mb-4">
+      <div
+        v-for="team in teams"
+        :key="team.id"
+        class="bg-white dark:bg-gray-800 shadow rounded-xl p-5 border border-gray-200 dark:border-gray-700"
+      >
+        <h2 class="text-2xl font-semibold mb-3 text-blue-700 dark:text-blue-400">
+          {{ team.name }}
+        </h2>
+        <div class="text-gray-700 dark:text-gray-300 mb-4">
           Team Total:
-          <span class="font-bold text-green-600">{{ formatNumber(team.teamTotal) }} GP</span>
+          <span class="font-bold text-green-600 dark:text-green-400">
+            {{ formatNumber(team.teamTotal) }} GP
+          </span>
         </div>
 
         <ul class="space-y-2">
           <li v-for="member in team.members" :key="member.id" class="flex items-center gap-3">
             <img
+              v-if="member.avatar"
               :src="member.avatar"
               alt="avatar"
-              class="w-10 h-10 rounded-full border border-gray-300"
-              v-if="member.avatar"
+              class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600"
             />
             <div
               v-else
-              class="w-10 h-10 flex items-center justify-center bg-gray-300 text-lg font-bold rounded-full"
+              class="w-10 h-10 flex items-center justify-center bg-gray-300 dark:bg-gray-600 text-lg font-bold rounded-full"
             >
               {{ member.rsn.charAt(0).toUpperCase() }}
             </div>
@@ -58,7 +69,7 @@ function formatNumber(value) {
                   >#{{ member.discriminator }}</span
                 >
               </div>
-              <div class="text-sm text-gray-600">
+              <div class="text-sm text-gray-600 dark:text-gray-400">
                 Total: {{ formatNumber(member.submissionTotal) }} GP
               </div>
             </div>
