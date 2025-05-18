@@ -15,7 +15,10 @@ const topEarners = computed(() =>
 onMounted(async () => {
   try {
     const res = await axios.get('/api/leaderboard/teams')
-    teams.value = res.data
+    teams.value = res.data.map((team) => ({
+      ...team,
+      members: team.members.sort((a, b) => b.submissionTotal - a.submissionTotal),
+    }))
 
     globalTotal.value = teams.value.reduce((sum, team) => sum + team.teamTotal, 0)
   } catch (err) {
@@ -25,6 +28,15 @@ onMounted(async () => {
 
 function formatNumber(value) {
   return value.toLocaleString()
+}
+
+function getTeamName(playerId) {
+  for (const team of teams.value) {
+    if (team.members.some((m) => m.id === playerId)) {
+      return team.name
+    }
+  }
+  return 'Unknown Team'
 }
 </script>
 
@@ -52,18 +64,26 @@ function formatNumber(value) {
             <li
               v-for="(player, index) in topEarners"
               :key="player.id"
-              class="flex items-center justify-between text-sm text-gray-800 dark:text-gray-200"
+              class="text-sm text-gray-800 dark:text-gray-200"
             >
-              <div>
-                <span class="font-medium">{{ index + 1 }}. {{ player.rsn }}</span>
-                <span
-                  v-if="player.discriminator && player.discriminator !== '0'"
-                  class="text-gray-500 dark:text-gray-400"
-                  >#{{ player.discriminator }}</span
-                >
-              </div>
-              <div class="font-semibold text-green-600 dark:text-green-400">
-                {{ formatNumber(player.submissionTotal) }} GP
+              <div class="flex items-center justify-between">
+                <div>
+                  <div class="font-bold text-base text-blue-800 dark:text-blue-300">
+                    {{ index + 1 }}. {{ player.rsn }}
+                    <span
+                      v-if="player.discriminator && player.discriminator !== '0'"
+                      class="text-gray-500 dark:text-gray-400 font-normal"
+                    >
+                      #{{ player.discriminator }}
+                    </span>
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 italic">
+                    {{ getTeamName(player.id) }}
+                  </div>
+                </div>
+                <div class="font-semibold text-green-600 dark:text-green-400 text-sm">
+                  {{ formatNumber(player.submissionTotal) }} GP
+                </div>
               </div>
             </li>
           </ol>
@@ -103,7 +123,7 @@ function formatNumber(value) {
                   {{ member.rsn.charAt(0).toUpperCase() }}
                 </div>
                 <div class="flex-1">
-                  <div class="font-medium text-base text-black dark:text-white">
+                  <div class="font-semibold text-lg text-blue-800 dark:text-blue-300">
                     {{ member.rsn
                     }}<span
                       v-if="member.discriminator && member.discriminator !== '0'"
