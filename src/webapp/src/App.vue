@@ -47,7 +47,7 @@ onMounted(() => {
     </nav>
 
     <main
-      class="flex-1 p-6 bg-white text-black dark:bg-gray-900 dark:text-white transition-colors duration-300"
+      class="flex-1 p-6 bg-gray-300 text-black dark:bg-gray-900 dark:text-white transition-colors duration-300"
     >
       <router-view />
     </main>
