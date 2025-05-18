@@ -2,6 +2,33 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 
+const valuePattern = /^(\d+(\.\d+)?)([kmb])?$/i
+const isValueValid = computed(() => valuePattern.test(form.value.value.trim()))
+
+const normalizedValue = computed(() => {
+  const input = form.value.value.trim().toLowerCase()
+  const match = input.match(/^(\d+(\.\d+)?)([kmb])?$/)
+
+  if (!match) return null
+
+  let [, numStr, , suffix] = match
+  let num = parseFloat(numStr)
+
+  switch (suffix) {
+    case 'k':
+      num *= 1_000
+      break
+    case 'm':
+      num *= 1_000_000
+      break
+    case 'b':
+      num *= 1_000_000_000
+      break
+  }
+
+  return Math.round(num).toLocaleString()
+})
+
 const form = ref({
   rsn: '',
   name: '',
@@ -21,7 +48,7 @@ const isFormValid = computed(() => {
   return (
     form.value.rsn &&
     form.value.name &&
-    form.value.value &&
+    isValueValid.value &&
     (form.value.proof || selectedImageFile.value)
   )
 })
@@ -112,6 +139,15 @@ function clearImage() {
           required
           class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-black dark:text-white"
         />
+        <p v-if="form.value && isValueValid" class="text-sm mt-1 text-gray-600 dark:text-gray-300">
+          Normalized value:
+          <span class="font-medium text-blue-600 dark:text-blue-400">{{ normalizedValue }} GP</span>
+        </p>
+
+        <p v-else-if="form.value" class="text-sm mt-1 text-red-600 dark:text-red-400">
+          Invalid format. Use numbers optionally followed by <code>k</code>, <code>m</code>, or
+          <code>b</code> (e.g. <code>200000000</code> or <code>200m</code>).
+        </p>
       </div>
 
       <div>
