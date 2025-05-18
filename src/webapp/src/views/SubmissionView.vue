@@ -10,7 +10,7 @@ const form = ref({
   self: false,
 })
 
-const inputFile = ref(null);
+const inputFile = ref(null)
 
 const selectedImageFile = ref(null)
 const successMessage = ref('')
@@ -76,44 +76,48 @@ function clearImage() {
 </script>
 
 <template>
-  <div class="max-w-xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-lg" @paste="handleImageUpload">
+  <div
+    class="max-w-xl mx-auto p-6 mt-10 bg-white dark:bg-gray-800 shadow-lg rounded-lg text-black dark:text-white transition-colors duration-300"
+    @paste="handleImageUpload"
+  >
     <h1 class="text-2xl font-bold mb-6 text-center">Submit Item</h1>
 
     <form @submit.prevent="submitForm" class="space-y-4">
       <div>
-        <label class="block text-sm font-medium text-gray-700">RSN</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">RSN</label>
         <input
           v-model="form.rsn"
           type="text"
           required
-          class="w-full p-2 border border-gray-300 rounded-md"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-black dark:text-white"
         />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">Item Name</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Item Name</label>
         <input
           v-model="form.name"
           type="text"
           required
-          class="w-full p-2 border border-gray-300 rounded-md"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-black dark:text-white"
         />
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">Item Value</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Item Value</label>
         <input
           v-model="form.value"
           type="text"
           placeholder="e.g. 200000000 or 200m"
           required
-          class="w-full p-2 border border-gray-300 rounded-md"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-black dark:text-white"
         />
       </div>
 
-      <!-- Image Proof URL Field -->
       <div>
-        <label class="block text-sm font-medium text-gray-700">Image Proof</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >Image Proof</label
+        >
         <div class="relative">
           <input
             :value="
@@ -128,14 +132,14 @@ function clearImage() {
             type="text"
             placeholder="Paste an image or direct image url"
             required
-            class="w-full p-2 border border-gray-300 rounded-md pr-16"
+            class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md pr-16 bg-white dark:bg-gray-900 text-black dark:text-white"
             :disabled="form.self && form.proof.startsWith('blob:')"
           />
           <button
             v-if="form.self && form.proof.startsWith('blob:')"
             type="button"
             @click="clearImage"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-red-500 hover:text-red-700 border border-red-500 rounded-md py-1 px-3 bg-white hover:bg-red-100 cursor-pointer"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-red-500 hover:text-red-700 border border-red-500 rounded-md py-1 px-3 bg-white dark:bg-gray-900 hover:bg-red-100 dark:hover:bg-red-900 cursor-pointer"
           >
             Clear Preview
           </button>
@@ -143,22 +147,27 @@ function clearImage() {
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700">Upload or Paste Image</label>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300"
+          >Upload or Paste Image</label
+        >
         <input
           ref="inputFile"
           type="file"
           accept="image/*"
           @change="handleImageUpload"
-          class="w-full p-2 border border-gray-300 rounded-md"
+          class="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-900 text-black dark:text-white"
         />
       </div>
 
-      <div v-if="form.proof" class="mt-4 text-center border border-gray-300 p-4 rounded">
-        <h2 class="text-md font-medium text-gray-800 mb-2">Image Preview</h2>
+      <div
+        v-if="form.proof"
+        class="mt-4 text-center border border-gray-300 dark:border-gray-600 p-4 rounded bg-gray-50 dark:bg-gray-700"
+      >
+        <h2 class="text-md font-medium text-gray-800 dark:text-white mb-2">Image Preview</h2>
         <img
           :src="form.proof"
           alt="Image Preview"
-          class="max-w-full h-auto rounded-md shadow-md border-2 border-gray-300"
+          class="max-w-full h-auto rounded-md shadow-md border-2 border-gray-300 dark:border-gray-600"
         />
       </div>
 
@@ -166,16 +175,16 @@ function clearImage() {
         <button
           type="submit"
           :disabled="!isFormValid || submittingForm"
-          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-600 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 disabled:cursor-not-allowed"
         >
           {{ submittingForm ? 'Submitting...' : 'Submit' }}
         </button>
       </div>
 
-      <div v-if="errorMessage" class="text-red-600 text-center mt-2">
+      <div v-if="errorMessage" class="text-red-600 dark:text-red-400 text-center mt-2">
         {{ errorMessage }}
       </div>
-      <div v-if="successMessage" class="text-green-600 text-center mt-2">
+      <div v-if="successMessage" class="text-green-600 dark:text-green-400 text-center mt-2">
         {{ successMessage }}
       </div>
     </form>
