@@ -15,7 +15,13 @@ onMounted(async () => {
   try {
     loading.value = true
     const res = await axios.get('/api/milestones')
-    milestones.value = res.data.milestones
+    // Sort each day's teams by cumulativeTotal descending
+    milestones.value = res.data.milestones.map((day) => {
+      return {
+        ...day,
+        teams: day.teams.slice().sort((a, b) => b.cumulativeTotal - a.cumulativeTotal),
+      }
+    })
 
     // Calculate total GP overall from milestones data
     if (milestones.value.length > 0) {
