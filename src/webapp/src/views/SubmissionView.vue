@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import axios from 'axios'
 
 const prices = ref({})
@@ -9,7 +9,7 @@ const priceError = ref('')
 // Load initial toggle state from localStorage or default to false
 const useCompactFormat = ref(localStorage.getItem('useCompactFormat') === 'true' || false)
 
-onMounted(async () => {
+async function fetchPrices() {
   try {
     const { data } = await axios.get('/api/prices')
     prices.value = data
@@ -19,6 +19,22 @@ onMounted(async () => {
   } finally {
     loadingPrices.value = false
   }
+}
+
+onMounted(async () => {
+  fetchPrices()
+
+  // Fetch prices every hour
+  const intervalId = setInterval(
+    () => {
+      fetchPrices()
+    },
+    60 * 60 * 1000,
+  )
+
+  onUnmounted(() => {
+    clearInterval(intervalId)
+  })
 })
 
 // Watch toggle changes and save to localStorage
