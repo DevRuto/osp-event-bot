@@ -116,4 +116,29 @@ export class SubmissionService {
       throw new Error(`Error getting submission ${submissionId}: ${JSON.stringify(error)}`);
     }
   }
+
+  static async getApprovedSubmissions() {
+    try {
+      const event = await EventService.getActiveEvent();
+      if (!event) {
+        throw new Error('No active event found');
+      }
+      const submissions = await prisma.submission.findMany({
+        where: {
+          eventId: event.id,
+          status: 'APPROVED',
+        },
+        include: {
+          team: true,
+        },
+        orderBy: {
+          value: 'desc',
+        },
+      });
+      return submissions;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error getting approved submissions: ${JSON.stringify(error)}`);
+    }
+  }
 }
