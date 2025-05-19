@@ -23,7 +23,7 @@ const OSRS_ITEM_MAP = {
 };
 
 const OSRS_PRICES_API = 'https://prices.runescape.wiki/api/v1/osrs/latest';
-const CACHE_DURATION = 1000 * 60 * 60; // 1 hour in milliseconds
+const CACHE_DURATION = 1000 * 60 * 5; // 5 minutes in milliseconds
 
 let cachedData = null;
 let lastFetchTime = 0;
@@ -57,7 +57,11 @@ export class OsrsPriceService {
       return prices;
     } catch (error) {
       console.error('Error fetching OSRS prices:', error);
-      throw error;
+      if (cachedData) {
+        logger.info('Returning cached OSRS prices due to error');
+        return cachedData; // Return cached data if available
+      }
+      throw new Error('Failed to fetch OSRS prices');
     }
   }
 }
