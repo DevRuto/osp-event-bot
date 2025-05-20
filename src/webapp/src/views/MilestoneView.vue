@@ -50,9 +50,6 @@ onMounted(async () => {
         {{ formatNumber(totalGPOverall) }} GP
       </span>
     </div>
-    <div class="text-center mb-8 italic text-gray-600 dark:text-gray-400">
-      *Note: Current day is not included in the milestones data.*
-    </div>
 
     <div v-if="loading" class="text-center text-xl">Loading milestones...</div>
     <div v-else-if="error" class="text-center text-red-600">{{ error }}</div>
