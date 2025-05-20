@@ -37,7 +37,7 @@ onMounted(async () => {
     milestones.value = res.data.milestones.map((day) => {
       return {
         ...day,
-        teams: day.teams.slice().sort((a, b) => b.cumulativeTotal - a.cumulativeTotal),
+        teams: day.teams.slice().sort((a, b) => b.dailyTotal - a.dailyTotal),
       }
     })
 
