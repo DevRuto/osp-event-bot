@@ -4,6 +4,12 @@ import logger from '#utils/logger.js';
 
 const router = Router();
 
+function getUTCDateString(date) {
+  return `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1)
+    .toString()
+    .padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`;
+}
+
 router.get('/milestones', async (_, res) => {
   try {
     const submissions = await SubmissionService.getApprovedSubmissions();
@@ -15,7 +21,7 @@ router.get('/milestones', async (_, res) => {
     let cumulativeOverall = 0;
 
     for (const sub of submissions) {
-      const day = sub.createdAt.toISOString().slice(0, 10);
+      const day = getUTCDateString(sub.createdAt);
       const teamId = sub.team.id;
       const teamName = sub.team.name;
       const valueNum = Number(sub.value) || 0;

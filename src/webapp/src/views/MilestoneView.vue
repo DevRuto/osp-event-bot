@@ -112,7 +112,7 @@ onMounted(async () => {
             <tr class="bg-gray-50 dark:bg-gray-700 font-bold">
               <td class="px-4 py-2 border-t border-gray-300 dark:border-gray-600">Day Total</td>
               <td
-                class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 text-green-700 dark:text-green-300 font-mono"
+                class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 font-mono text-yellow-600 dark:text-yellow-400 font-bold"
               >
                 {{ formatNumber(dayData.dayTotal) }} GP
               </td>
