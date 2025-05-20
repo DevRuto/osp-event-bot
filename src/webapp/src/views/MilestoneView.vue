@@ -11,6 +11,24 @@ function formatNumber(value) {
   return value.toLocaleString()
 }
 
+function getEventDayTimeWindowForUser() {
+  const eventStartUTC = new Date(Date.UTC(2025, 4, 16, 16)) // May 16, 12PM EST = 16:00 UTC
+  const eventEndUTC = new Date(eventStartUTC.getTime() + 24 * 60 * 60 * 1000)
+
+  const startLocal = eventStartUTC.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+  const endLocal = eventEndUTC.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+
+  return `${startLocal} – ${endLocal} (your local time)`
+}
+
+const eventDayWindow = getEventDayTimeWindowForUser()
+
 onMounted(async () => {
   try {
     loading.value = true
@@ -43,6 +61,9 @@ onMounted(async () => {
 <template>
   <div class="max-w-5xl mx-auto p-6 mt-10 text-gray-900 dark:text-gray-100">
     <h1 class="text-4xl font-bold mb-8 text-center">Event Milestones</h1>
+    <p class="text-center text-gray-600 dark:text-gray-400 text-sm mb-6">
+      Each event day runs from <span class="font-medium">{{ eventDayWindow }}</span>
+    </p>
 
     <div class="text-center text-xl font-semibold mb-6">
       Total GP Overall:

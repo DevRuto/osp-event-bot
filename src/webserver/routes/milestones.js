@@ -4,10 +4,15 @@ import logger from '#utils/logger.js';
 
 const router = Router();
 
-function getUTCDateString(date) {
-  return `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1)
+function getAdjustedDayString(date) {
+  const adjustedDate = new Date(date.getTime());
+
+  // Subtract 4 hours to shift the "day boundary" to noon EDT (16:00 UTC)
+  adjustedDate.setUTCHours(adjustedDate.getUTCHours() - 4);
+
+  return `${adjustedDate.getUTCFullYear()}-${(adjustedDate.getUTCMonth() + 1)
     .toString()
-    .padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`;
+    .padStart(2, '0')}-${adjustedDate.getUTCDate().toString().padStart(2, '0')}`;
 }
 
 router.get('/milestones', async (_, res) => {
@@ -21,7 +26,7 @@ router.get('/milestones', async (_, res) => {
     let cumulativeOverall = 0;
 
     for (const sub of submissions) {
-      const day = getUTCDateString(sub.createdAt);
+      const day = getAdjustedDayString(sub.createdAt);
       const teamId = sub.team.id;
       const teamName = sub.team.name;
       const valueNum = Number(sub.value) || 0;
@@ -80,7 +85,7 @@ router.get('/milestones', async (_, res) => {
 
     res.json({ milestones });
   } catch (error) {
-    logger.error('Error fetching prices:', error);
+    logger.error('Error fetching milestones:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
