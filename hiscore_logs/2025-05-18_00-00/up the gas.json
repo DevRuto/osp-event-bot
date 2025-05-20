@@ -1,0 +1,464 @@
+{
+  "skills": {
+    "overall": {
+      "rank": 123885,
+      "level": 2189,
+      "xp": 268202670
+    },
+    "attack": {
+      "rank": 233920,
+      "level": 99,
+      "xp": 14476300
+    },
+    "defence": {
+      "rank": 175977,
+      "level": 99,
+      "xp": 14648417
+    },
+    "strength": {
+      "rank": 166009,
+      "level": 99,
+      "xp": 21480202
+    },
+    "hitpoints": {
+      "rank": 205777,
+      "level": 99,
+      "xp": 28312025
+    },
+    "ranged": {
+      "rank": 247848,
+      "level": 99,
+      "xp": 21517836
+    },
+    "prayer": {
+      "rank": 85321,
+      "level": 99,
+      "xp": 13127566
+    },
+    "magic": {
+      "rank": 250531,
+      "level": 99,
+      "xp": 15374500
+    },
+    "cooking": {
+      "rank": 278175,
+      "level": 99,
+      "xp": 13080670
+    },
+    "woodcutting": {
+      "rank": 221467,
+      "level": 98,
+      "xp": 12879340
+    },
+    "fletching": {
+      "rank": 103963,
+      "level": 99,
+      "xp": 13203317
+    },
+    "fishing": {
+      "rank": 299895,
+      "level": 91,
+      "xp": 5955242
+    },
+    "firemaking": {
+      "rank": 463438,
+      "level": 92,
+      "xp": 6535063
+    },
+    "crafting": {
+      "rank": 101926,
+      "level": 99,
+      "xp": 13423454
+    },
+    "smithing": {
+      "rank": 193380,
+      "level": 90,
+      "xp": 5560833
+    },
+    "mining": {
+      "rank": 165856,
+      "level": 97,
+      "xp": 10916165
+    },
+    "herblore": {
+      "rank": 300925,
+      "level": 88,
+      "xp": 4415655
+    },
+    "agility": {
+      "rank": 195275,
+      "level": 88,
+      "xp": 4533101
+    },
+    "thieving": {
+      "rank": 278088,
+      "level": 91,
+      "xp": 5920596
+    },
+    "slayer": {
+      "rank": 149679,
+      "level": 99,
+      "xp": 13617713
+    },
+    "farming": {
+      "rank": 140641,
+      "level": 99,
+      "xp": 14617943
+    },
+    "runecrafting": {
+      "rank": 173339,
+      "level": 88,
+      "xp": 4568659
+    },
+    "hunter": {
+      "rank": 203182,
+      "level": 90,
+      "xp": 5597465
+    },
+    "construction": {
+      "rank": 189730,
+      "level": 88,
+      "xp": 4440608
+    }
+  },
+  "minigames": {
+    "leaguePoints": {
+      "rank": -1,
+      "score": -1
+    },
+    "deadmanPoints": {
+      "rank": -1,
+      "score": -1
+    },
+    "bountyHunter": {
+      "rank": -1,
+      "score": -1
+    },
+    "bountyHunterRogues": {
+      "rank": -1,
+      "score": -1
+    },
+    "bountyHunterLegacy": {
+      "rank": -1,
+      "score": -1
+    },
+    "bountyHunterRoguesLegacy": {
+      "rank": -1,
+      "score": -1
+    },
+    "clueScrollsAll": {
+      "rank": 73551,
+      "score": 712
+    },
+    "clueScrollsBeginner": {
+      "rank": 25496,
+      "score": 216
+    },
+    "clueScrollsEasy": {
+      "rank": 122451,
+      "score": 61
+    },
+    "clueScrollsMedium": {
+      "rank": 169304,
+      "score": 96
+    },
+    "clueScrollsHard": {
+      "rank": 115553,
+      "score": 194
+    },
+    "clueScrollsElite": {
+      "rank": 31493,
+      "score": 110
+    },
+    "clueScrollsMaster": {
+      "rank": 79969,
+      "score": 35
+    },
+    "lms": {
+      "rank": -1,
+      "score": -1
+    },
+    "pvpArena": {
+      "rank": -1,
+      "score": -1
+    },
+    "soulWarsZeal": {
+      "rank": -1,
+      "score": -1
+    },
+    "riftsClosed": {
+      "rank": 200460,
+      "score": 179
+    },
+    "colosseumGlory": {
+      "rank": 111336,
+      "score": 1985
+    },
+    "collectionsLogged": {
+      "rank": 37862,
+      "score": 600
+    }
+  },
+  "bosses": {
+    "abyssalSire": {
+      "rank": 63844,
+      "kills": 500
+    },
+    "alchemicalHydra": {
+      "rank": 87717,
+      "kills": 829
+    },
+    "amoxliatl": {
+      "rank": 48719,
+      "kills": 50
+    },
+    "araxxor": {
+      "rank": 101915,
+      "kills": 150
+    },
+    "artio": {
+      "rank": 57722,
+      "kills": 136
+    },
+    "barrowsChests": {
+      "rank": 150054,
+      "kills": 390
+    },
+    "bryophyta": {
+      "rank": 250513,
+      "kills": 5
+    },
+    "callisto": {
+      "rank": 50012,
+      "kills": 357
+    },
+    "calvarion": {
+      "rank": 88226,
+      "kills": 115
+    },
+    "cerberus": {
+      "rank": 79019,
+      "kills": 908
+    },
+    "chambersOfXeric": {
+      "rank": 176950,
+      "kills": 65
+    },
+    "chambersOfXericChallengeMode": {
+      "rank": -1,
+      "kills": -1
+    },
+    "chaosElemental": {
+      "rank": 51438,
+      "kills": 113
+    },
+    "chaosFanatic": {
+      "rank": 93647,
+      "kills": 60
+    },
+    "commanderZilyana": {
+      "rank": 107743,
+      "kills": 159
+    },
+    "corporealBeast": {
+      "rank": 237066,
+      "kills": 5
+    },
+    "crazyArchaeologist": {
+      "rank": 10161,
+      "kills": 388
+    },
+    "dagannothPrime": {
+      "rank": 68302,
+      "kills": 443
+    },
+    "dagannothRex": {
+      "rank": 81675,
+      "kills": 496
+    },
+    "dagannothSupreme": {
+      "rank": 65121,
+      "kills": 464
+    },
+    "derangedArchaeologist": {
+      "rank": 29893,
+      "kills": 50
+    },
+    "dukeSucellus": {
+      "rank": 78381,
+      "kills": 119
+    },
+    "generalGraardor": {
+      "rank": 179147,
+      "kills": 211
+    },
+    "giantMole": {
+      "rank": 98575,
+      "kills": 400
+    },
+    "grotesqueGuardians": {
+      "rank": 22022,
+      "kills": 700
+    },
+    "hespori": {
+      "rank": 95134,
+      "kills": 92
+    },
+    "kalphiteQueen": {
+      "rank": 58806,
+      "kills": 257
+    },
+    "kingBlackDragon": {
+      "rank": 78056,
+      "kills": 450
+    },
+    "kraken": {
+      "rank": 60171,
+      "kills": 3138
+    },
+    "krilTsutsaroth": {
+      "rank": 147874,
+      "kills": 82
+    },
+    "lunarChests": {
+      "rank": 101031,
+      "kills": 83
+    },
+    "mimic": {
+      "rank": 22998,
+      "kills": 10
+    },
+    "nex": {
+      "rank": 104818,
+      "kills": 104
+    },
+    "nightmare": {
+      "rank": 103901,
+      "kills": 8
+    },
+    "phosanisNightmare": {
+      "rank": -1,
+      "kills": -1
+    },
+    "obor": {
+      "rank": 127149,
+      "kills": 12
+    },
+    "phantomMuspah": {
+      "rank": 101682,
+      "kills": 100
+    },
+    "sarachnis": {
+      "rank": 26458,
+      "kills": 575
+    },
+    "scorpia": {
+      "rank": 25132,
+      "kills": 238
+    },
+    "scurrius": {
+      "rank": 108477,
+      "kills": 103
+    },
+    "skotizo": {
+      "rank": 219927,
+      "kills": 26
+    },
+    "solHeredit": {
+      "rank": -1,
+      "kills": -1
+    },
+    "spindel": {
+      "rank": 87332,
+      "kills": 50
+    },
+    "tempoross": {
+      "rank": 188510,
+      "kills": 120
+    },
+    "gauntlet": {
+      "rank": 21746,
+      "kills": 100
+    },
+    "corruptedGauntlet": {
+      "rank": 212614,
+      "kills": 26
+    },
+    "hueycoatl": {
+      "rank": 38106,
+      "kills": 90
+    },
+    "leviathan": {
+      "rank": 40207,
+      "kills": 100
+    },
+    "royalTitans": {
+      "rank": 120406,
+      "kills": 50
+    },
+    "whisperer": {
+      "rank": 68005,
+      "kills": 8
+    },
+    "theatreOfBlood": {
+      "rank": -1,
+      "kills": -1
+    },
+    "theatreOfBloodHardMode": {
+      "rank": -1,
+      "kills": -1
+    },
+    "thermonuclearSmokeDevil": {
+      "rank": 77521,
+      "kills": 880
+    },
+    "tombsOfAmascut": {
+      "rank": 61150,
+      "kills": 93
+    },
+    "tombsOfAmascutExpertMode": {
+      "rank": 127348,
+      "kills": 13
+    },
+    "tzKalZuk": {
+      "rank": -1,
+      "kills": -1
+    },
+    "tzTokJad": {
+      "rank": 74384,
+      "kills": 15
+    },
+    "vardorvis": {
+      "rank": 86535,
+      "kills": 63
+    },
+    "venenatis": {
+      "rank": 102535,
+      "kills": 78
+    },
+    "vetion": {
+      "rank": 70757,
+      "kills": 96
+    },
+    "vorkath": {
+      "rank": 79975,
+      "kills": 1000
+    },
+    "wintertodt": {
+      "rank": 434535,
+      "kills": 271
+    },
+    "yama": {
+      "rank": -1,
+      "kills": -1
+    },
+    "zalcano": {
+      "rank": 98142,
+      "kills": 130
+    },
+    "zulrah": {
+      "rank": 171184,
+      "kills": 665
+    }
+  }
+}
