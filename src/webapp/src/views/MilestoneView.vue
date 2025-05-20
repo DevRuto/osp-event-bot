@@ -64,12 +64,16 @@ onMounted(async () => {
       >
         <h2 class="text-2xl font-semibold mb-4 text-center">
           {{
-            new Date(dayData.day).toLocaleDateString(undefined, {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-            })
+            (() => {
+              const [year, month, day] = dayData.day.split('-')
+              const date = new Date(year, month - 1, day)
+              return date.toLocaleDateString(undefined, {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+              })
+            })()
           }}
         </h2>
 
