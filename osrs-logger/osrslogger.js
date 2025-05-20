@@ -101,37 +101,62 @@ const liveCountdown = (duration) =>
 const getDelayUntilNext6Hour = () => {
   const now = new Date();
 
-  // Get current time in America/New_York
-  const estFormatter = new Intl.DateTimeFormat('en-US', {
+  // Get current time in Eastern Time
+  const estParts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'America/New_York',
-    hour12: false,
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
     year: 'numeric',
-    month: 'numeric',
-    day: 'numeric',
-  });
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  })
+    .formatToParts(now)
+    .reduce((acc, part) => {
+      if (part.type !== 'literal') acc[part.type] = parseInt(part.value, 10);
+      return acc;
+    }, {});
 
-  const parts = estFormatter.formatToParts(now).reduce((acc, part) => {
-    if (part.type !== 'literal') acc[part.type] = parseInt(part.value, 10);
-    return acc;
-  }, {});
-
-  const estNow = new Date(
-    Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second)
+  // Construct current EST time in UTC
+  const currentEst = new Date(
+    Date.UTC(
+      estParts.year,
+      estParts.month - 1,
+      estParts.day,
+      estParts.hour,
+      estParts.minute,
+      estParts.second
+    )
   );
 
-  // Find next 00:00 or 12:00 EST
-  const nextEst = new Date(estNow);
-  if (parts.hour < 12) {
-    nextEst.setUTCHours(12, 0, 0, 0);
-  } else {
-    nextEst.setUTCDate(nextEst.getUTCDate() + 1);
-    nextEst.setUTCHours(0, 0, 0, 0);
+  // Determine EST offset from UTC in milliseconds
+  const estOffsetMs = now.getTime() - currentEst.getTime();
+
+  // Determine the next 6-hour interval (0, 6, 12, 18)
+  const currentHour = estParts.hour;
+  let nextHour = Math.ceil(currentHour / 6) * 6;
+  if (nextHour === 24) {
+    nextHour = 0;
+    currentEst.setUTCDate(currentEst.getUTCDate() + 1); // Move to next day
   }
 
-  return nextEst - now;
+  // Construct the next interval time in EST (but still in UTC context)
+  const nextEst = new Date(
+    Date.UTC(
+      currentEst.getUTCFullYear(),
+      currentEst.getUTCMonth(),
+      currentEst.getUTCDate(),
+      nextHour,
+      0,
+      0
+    )
+  );
+
+  // Convert EST time back to local time by applying EST offset
+  const nextUtcRun = new Date(nextEst.getTime() + estOffsetMs);
+
+  return nextUtcRun.getTime() - now.getTime();
 };
 
 async function scheduleNext6Hours() {
