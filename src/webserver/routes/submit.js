@@ -11,6 +11,10 @@ const router = Router();
 router.post('/submit', async (req, res) => {
   const { rsn, name, value, proof, self } = req.body;
 
+  if (proof.startsWith('blob:')) {
+    return res.status(400).json({ error: 'Please refresh the page and try again' });
+  }
+
   if (!rsn || !name || !value || !proof) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
@@ -27,7 +31,7 @@ router.post('/submit', async (req, res) => {
   }
 
   // Try to find the participant
-  const participant = await EventService.getUserDetailsByRsn(rsn);
+  const participant = await EventService.getUserDetailsByRsn(rsn.trim());
   if (!participant) {
     return res.status(400).json({ error: 'Participant not found' });
   }
@@ -43,7 +47,6 @@ router.post('/submit', async (req, res) => {
     logger.info(
       `Submission added by ${rsn}: ${submission.id} - ${submission.name} (${submission.value})`
     );
-    res.status(200).json(submission);
   } catch (error) {
     logger.error('Error adding submission: ' + error);
     res.status(500).json({ error: 'Failed to create submission.', details: error.message });
@@ -51,39 +54,51 @@ router.post('/submit', async (req, res) => {
   }
   const approvalChannel = await ConfigService.getApprovalChannel(process.env.GUILD_ID);
 
-  // Forward the submission to the approval channel
-  const embed = {
-    title: 'New Item Submission',
-    description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
-    image: { url: proof },
-    fields: [
-      { name: 'RSN', value: rsn, inline: true },
-      { name: 'Status', value: 'Pending', inline: false },
-      { name: 'Proof', value: `[Click to view image](${proof})` },
-    ],
-    footer: { text: `Submitted by: ${participant.user.username}` },
-  };
-  if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
-    embed.image.url = proof;
+  try {
+    // Forward the submission to the approval channel
+    const embed = {
+      title: 'New Item Submission',
+      description: `Name: ${name}\nValue: ${formatValueOutput(parseInt(submission.value))}`,
+      image: { url: proof },
+      fields: [
+        { name: 'RSN', value: rsn, inline: true },
+        { name: 'Status', value: 'Pending', inline: false },
+        { name: 'Proof', value: `[Click to view image](${submission.proofUrl})` },
+      ],
+      footer: { text: `Submitted by: ${participant.user.username}` },
+    };
+    if (/^https:\/\/.*\.(?:png|jpg|jpeg|gif|webp)(\?.*)?$/i.test(proof)) {
+      embed.image.url = submission.proofUrl;
+    }
+    // Create approve and deny buttons
+    const approve = new ButtonBuilder()
+      .setCustomId(`submission_approve_${submission.id}`)
+      .setLabel('Approve')
+      .setStyle(ButtonStyle.Success);
+
+    const deny = new ButtonBuilder()
+      .setCustomId(`submission_deny_${submission.id}`)
+      .setLabel('Deny')
+      .setStyle(ButtonStyle.Danger);
+
+    const row = new ActionRowBuilder().addComponents(approve, deny);
+
+    const channel = await client.channels.fetch(approvalChannel);
+    const sentMessage = await channel.send({
+      embeds: [embed],
+      components: [row],
+    });
+
+    await sentMessage.react('👍');
+    await sentMessage.react('👎');
+
+    res.status(200).json(submission);
+  } catch (error) {
+    logger.error('Error sending submission to approval channel: ' + error);
+    res
+      .status(500)
+      .json({ error: 'Failed to send submission to approval channel.', details: error.message });
   }
-  // Create approve and deny buttons
-  const approve = new ButtonBuilder()
-    .setCustomId(`submission_approve_${submission.id}`)
-    .setLabel('Approve')
-    .setStyle(ButtonStyle.Success);
-
-  const deny = new ButtonBuilder()
-    .setCustomId(`submission_deny_${submission.id}`)
-    .setLabel('Deny')
-    .setStyle(ButtonStyle.Danger);
-
-  const row = new ActionRowBuilder().addComponents(approve, deny);
-
-  const channel = await client.channels.fetch(approvalChannel);
-  await channel.send({
-    embeds: [embed],
-    components: [row],
-  });
 });
 
 export default router;

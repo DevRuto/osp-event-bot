@@ -5,6 +5,8 @@ import { ImageService } from '#services/imageService.js';
 import logger from '#utils/logger.js';
 import { parseValueInput } from '#utils/format.js';
 
+const BASE_URL = process.env.BASE_URL || 'http://localhost:3000';
+
 export class SubmissionService {
   static async addSubmission(discordId, name, value, proofUrl, backup = true) {
     const event = await EventService.getActiveEvent();
@@ -26,6 +28,12 @@ export class SubmissionService {
       throw new Error('That proof has already been submitted.');
     }
 
+    const parsedValue = parseValueInput(value);
+    if (parsedValue === null) {
+      throw new Error('Invalid value format. Use numbers with optional k, m, or b suffixes.');
+    }
+    const cappedValue = Math.min(parsedValue, 200_000_000);
+
     let backupImagePath;
     if (backup) {
       backupImagePath = await ImageService.backupImageUrl(proofUrl);
@@ -34,18 +42,13 @@ export class SubmissionService {
       }
     }
 
-    const parsedValue = parseValueInput(value);
-    if (parsedValue === null) {
-      throw new Error('Invalid value format. Use numbers with optional k, m, or b suffixes.');
-    }
-    const cappedValue = Math.min(parsedValue, 200_000_000);
     try {
       const submission = await prisma.submission.create({
         data: {
           name,
           value: cappedValue + '',
-          proofUrl,
-          backupUrl: backupImagePath,
+          proofUrl: backup ? `${BASE_URL}${backupImagePath}` : proofUrl,
+          backupUrl: proofUrl,
           user: {
             connect: {
               id: discordId,
@@ -111,6 +114,31 @@ export class SubmissionService {
     } catch (error) {
       console.error(error);
       throw new Error(`Error getting submission ${submissionId}: ${JSON.stringify(error)}`);
+    }
+  }
+
+  static async getApprovedSubmissions() {
+    try {
+      const event = await EventService.getActiveEvent();
+      if (!event) {
+        throw new Error('No active event found');
+      }
+      const submissions = await prisma.submission.findMany({
+        where: {
+          eventId: event.id,
+          status: 'APPROVED',
+        },
+        include: {
+          team: true,
+        },
+        orderBy: {
+          value: 'desc',
+        },
+      });
+      return submissions;
+    } catch (error) {
+      console.error(error);
+      throw new Error(`Error getting approved submissions: ${JSON.stringify(error)}`);
     }
   }
 }

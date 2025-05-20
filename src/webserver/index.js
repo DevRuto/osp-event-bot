@@ -6,6 +6,8 @@ import SubmissionRoute from './routes/submit.js';
 import EventRoute from './routes/event.js';
 import ImageRoute from './routes/image.js';
 import TeamLeaderboardRoute from './routes/teams.js';
+import PricesRoute from './routes/prices.js';
+import MilestonesRoute from './routes/milestones.js';
 
 const app = express();
 app.use(express.json());
@@ -14,6 +16,8 @@ app.use(express.json());
 app.use('/api', SubmissionRoute);
 app.use('/api', EventRoute);
 app.use('/api', ImageRoute);
+app.use('/api', PricesRoute);
+app.use('/api', MilestonesRoute);
 app.use('/api/leaderboard', TeamLeaderboardRoute);
 
 // Serve proof images
