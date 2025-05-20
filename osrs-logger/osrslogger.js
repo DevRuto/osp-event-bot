@@ -47,9 +47,9 @@ async function logHiscores() {
   }
 
   let count = 0;
-  for (const rsn of rsns) {
+  for (let rsn of rsns) {
     console.log(`[${++count}/${rsns.length}] Checking RSN: ${rsn}`);
-    if (rsn === 'lvl 4 zebak') continue;
+    if (rsn === 'lvl 4 zebak') rsn = 'phrukurself';
     // Check if the file already exists
     if (await fs.stat(`./hiscore_logs/${timestamp}/${rsn}.json`).catch(() => false)) {
       console.log(`File already exists for RSN: ${rsn}`);
@@ -98,30 +98,57 @@ const liveCountdown = (duration) =>
     }, 1000);
   });
 
-const getDelayUntilNext12Hour = () => {
+const getDelayUntilNext6Hour = () => {
   const now = new Date();
-  const next = new Date(now);
 
-  if (now.getHours() < 12) {
-    next.setHours(12, 0, 0, 0);
+  // Get current time in America/New_York
+  const estFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+  });
+
+  const parts = estFormatter.formatToParts(now).reduce((acc, part) => {
+    if (part.type !== 'literal') acc[part.type] = parseInt(part.value, 10);
+    return acc;
+  }, {});
+
+  const estNow = new Date(
+    Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second)
+  );
+
+  // Find next 00:00 or 12:00 EST
+  const nextEst = new Date(estNow);
+  if (parts.hour < 12) {
+    nextEst.setUTCHours(12, 0, 0, 0);
   } else {
-    next.setHours(24, 0, 0, 0);
+    nextEst.setUTCDate(nextEst.getUTCDate() + 1);
+    nextEst.setUTCHours(0, 0, 0, 0);
   }
 
-  return next - now;
+  return nextEst - now;
 };
 
-async function scheduleNext12Hours() {
+async function scheduleNext6Hours() {
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const delay = getDelayUntilNext12Hour();
+    const delay = getDelayUntilNext6Hour();
     await liveCountdown(delay);
 
-    await logHiscores();
-    // Wait 5 seconds
+    try {
+      await logHiscores();
+    } catch (err) {
+      console.error('Unexpected error during hiscore logging:', err);
+    }
+
     await new Promise((resolve) => setTimeout(resolve, 5000));
   }
 }
 
 // logHiscores();
-scheduleNext12Hours();
+scheduleNext6Hours();
