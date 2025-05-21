@@ -1,4 +1,5 @@
 <script setup>
+import PieChart from '@/components/PieChart.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
@@ -6,6 +7,10 @@ const milestones = ref([])
 const loading = ref(true)
 const error = ref(null)
 const totalGPOverall = ref(0)
+
+// Compute pie data for entire event
+const overallPieLabels = ref([])
+const overallPieData = ref([])
 
 function formatNumber(value) {
   return value.toLocaleString()
@@ -46,6 +51,8 @@ onMounted(async () => {
       const lastDay = milestones.value[milestones.value.length - 1]
       // totalGPOverall = max cumulative total from the last day for all teams
       totalGPOverall.value = lastDay.cumulativeTotal
+      overallPieLabels.value = lastDay.teams.map((t) => t.teamName)
+      overallPieData.value = lastDay.teams.map((t) => t.cumulativeTotal)
     } else {
       totalGPOverall.value = 0
     }
@@ -72,6 +79,14 @@ onMounted(async () => {
       </span>
     </div>
 
+    <div class="mb-12" v-if="overallPieLabels.length && overallPieData.length">
+      <h2 class="text-2xl font-bold text-center mb-4">GP Share by Team (Total Event)</h2>
+      <div class="w-72 h-72 mx-auto">
+        <!-- 18rem = 288px -->
+        <PieChart :labels="overallPieLabels" :data="overallPieData" />
+      </div>
+    </div>
+
     <div v-if="loading" class="text-center text-xl">Loading milestones...</div>
     <div v-else-if="error" class="text-center text-red-600">{{ error }}</div>
     <div v-else>
@@ -87,7 +102,6 @@ onMounted(async () => {
               const date = new Date(year, month - 1, day)
               return date.toLocaleDateString(undefined, {
                 weekday: 'long',
-                year: 'numeric',
                 month: 'short',
                 day: 'numeric',
               })
@@ -95,53 +109,68 @@ onMounted(async () => {
           }}
         </h2>
 
-        <table class="w-full text-left table-auto border-collapse">
-          <thead>
-            <tr class="bg-gray-100 dark:bg-gray-700">
-              <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">Team</th>
-              <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">
-                GP Earned That Day
-              </th>
-              <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">Cumulative GP</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="team in dayData.teams"
-              :key="team.teamId"
-              class="hover:bg-gray-50 dark:hover:bg-gray-700"
-            >
-              <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 font-semibold">
-                {{ team.teamName }}
-              </td>
-              <td
-                class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 text-green-600 dark:text-green-400 font-mono"
-              >
-                {{ formatNumber(team.dailyTotal) }} GP
-              </td>
-              <td
-                class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 text-green-700 dark:text-green-300 font-mono font-semibold"
-              >
-                {{ formatNumber(team.cumulativeTotal) }} GP
-              </td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr class="bg-gray-50 dark:bg-gray-700 font-bold">
-              <td class="px-4 py-2 border-t border-gray-300 dark:border-gray-600">Day Total</td>
-              <td
-                class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 font-mono text-yellow-600 dark:text-yellow-400 font-bold"
-              >
-                {{ formatNumber(dayData.dayTotal) }} GP
-              </td>
-              <td
-                class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 text-green-800 dark:text-green-400 font-mono"
-              >
-                {{ formatNumber(dayData.cumulativeTotal) }} GP
-              </td>
-            </tr>
-          </tfoot>
-        </table>
+        <div class="flex flex-col lg:flex-row gap-6">
+          <!-- Left: Table -->
+          <div class="flex-1">
+            <table class="w-full text-left table-auto border-collapse">
+              <thead>
+                <tr class="bg-gray-100 dark:bg-gray-700">
+                  <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">Team</th>
+                  <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">
+                    GP Earned That Day
+                  </th>
+                  <th class="px-4 py-2 border-b border-gray-300 dark:border-gray-600">
+                    Cumulative GP
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="team in dayData.teams"
+                  :key="team.teamId"
+                  class="hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  <td class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 font-semibold">
+                    {{ team.teamName }}
+                  </td>
+                  <td
+                    class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 text-green-600 dark:text-green-400 font-mono"
+                  >
+                    {{ formatNumber(team.dailyTotal) }} GP
+                  </td>
+                  <td
+                    class="px-4 py-2 border-b border-gray-200 dark:border-gray-600 text-green-700 dark:text-green-300 font-mono font-semibold"
+                  >
+                    {{ formatNumber(team.cumulativeTotal) }} GP
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr class="bg-gray-50 dark:bg-gray-700 font-bold">
+                  <td class="px-4 py-2 border-t border-gray-300 dark:border-gray-600">Day Total</td>
+                  <td
+                    class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 font-mono text-yellow-600 dark:text-yellow-400 font-bold"
+                  >
+                    {{ formatNumber(dayData.dayTotal) }} GP
+                  </td>
+                  <td
+                    class="px-4 py-2 border-t border-gray-300 dark:border-gray-600 text-green-800 dark:text-green-400 font-mono"
+                  >
+                    {{ formatNumber(dayData.cumulativeTotal) }} GP
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- Right: Pie Chart -->
+          <div class="w-full md:w-1/3 px-2">
+            <PieChart
+              :labels="dayData.teams.map((t) => t.teamName)"
+              :data="dayData.teams.map((t) => t.dailyTotal)"
+            />
+          </div>
+        </div>
       </div>
     </div>
   </div>
