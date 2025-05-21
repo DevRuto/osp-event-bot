@@ -81,14 +81,25 @@ const formatDuration = (ms) => {
   return `${hours}h ${minutes}m ${seconds}s`;
 };
 
-const liveCountdown = (duration) =>
+const liveCountdown = (duration, nextRunTime) =>
   new Promise((resolve) => {
     let msRemaining = duration;
+
+    // Log once for PM2
+    if (!process.stdout.isTTY) {
+      console.log(
+        `Next run at: ${nextRunTime.toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+        })} (EST)`
+      );
+    }
 
     const timer = setInterval(() => {
       msRemaining -= 1000;
 
-      process.stdout.write(`\r⏳ Next log in: ${formatDuration(msRemaining)}   `);
+      if (process.stdout.isTTY) {
+        process.stdout.write(`\r⏳ Next run in: ${formatDuration(msRemaining)}   `);
+      }
 
       if (msRemaining <= 0) {
         clearInterval(timer);
@@ -163,7 +174,8 @@ async function scheduleNext6Hours() {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const delay = getDelayUntilNext6Hour();
-    await liveCountdown(delay);
+    const nextRun = new Date(Date.now() + delay);
+    await liveCountdown(delay, nextRun);
 
     try {
       await logHiscores();
