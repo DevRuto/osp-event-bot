@@ -132,21 +132,33 @@ function getTeamName(playerId) {
               class="text-sm text-gray-800 dark:text-gray-200"
             >
               <div class="flex items-center justify-between">
-                <div>
-                  <div class="font-bold text-base text-blue-800 dark:text-blue-300">
-                    {{ index + 1 }}. {{ player.rsn }}
+                <div class="flex min-w-[3rem] flex-col text-blue-800 dark:text-blue-300">
+                  <div class="flex items-baseline font-bold">
+                    <span class="mr-1">{{ index + 1 }}.</span>
+                    <span>{{ player.rsn.split(',')[0].trim() }}</span>
+                  </div>
+                  <div>
                     <span
-                      v-if="player.discriminator && player.discriminator !== '0'"
-                      class="text-gray-500 dark:text-gray-400 font-normal"
+                      v-for="(part, i) in player.rsn.split(',').slice(1)"
+                      :key="i"
+                      class="block break-words ml-[1rem]"
                     >
-                      #{{ player.discriminator }}
+                      {{ part.trim() }}
                     </span>
                   </div>
-                  <div class="text-xs text-gray-600 dark:text-gray-400 italic">
+                  <div
+                    v-if="player.discriminator && player.discriminator !== '0'"
+                    class="text-gray-500 dark:text-gray-400 font-normal ml-[1.6rem]"
+                  >
+                    #{{ player.discriminator }}
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 italic ml-[1.6rem]">
                     {{ getTeamName(player.id) }}
                   </div>
                 </div>
-                <div class="font-semibold text-green-600 dark:text-green-400 text-sm">
+                <div
+                  class="font-semibold text-green-600 dark:text-green-400 text-sm whitespace-nowrap"
+                >
                   {{ formatNumber(player.submissionTotal) }} GP
                 </div>
               </div>
