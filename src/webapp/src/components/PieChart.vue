@@ -5,7 +5,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import { getTeamColor } from '@/utils/colors.js'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement, ChartDataLabels)
+ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
 const props = defineProps({
   labels: Array,
@@ -105,6 +105,6 @@ onBeforeUnmount(() => {
 
 <template>
   <div v-if="chartReady">
-    <Pie :data="chartData" :options="chartOptions" ref="pieChartRef" />
+    <Pie :data="chartData" :options="chartOptions" ref="pieChartRef" :plugins="[ChartDataLabels]" />
   </div>
 </template>
