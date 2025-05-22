@@ -49,11 +49,28 @@ onMounted(async () => {
 
     // Calculate total GP overall from milestones data
     if (milestones.value.length > 0) {
-      const lastDay = milestones.value[milestones.value.length - 1]
-      // totalGPOverall = max cumulative total from the last day for all teams
-      totalGPOverall.value = lastDay.cumulativeTotal
-      overallPieLabels.value = lastDay.teams.map((t) => t.teamName)
-      overallPieData.value = lastDay.teams.map((t) => t.cumulativeTotal)
+      const teamTotals = new Map()
+
+      for (const day of milestones.value) {
+        for (const team of day.teams) {
+          const existing = teamTotals.get(team.teamId) || {
+            name: team.teamName,
+            cumulative: 0,
+          }
+          teamTotals.set(team.teamId, {
+            name: team.teamName,
+            cumulative: Math.max(existing.cumulative, team.cumulativeTotal),
+          })
+        }
+      }
+
+      const sortedTotals = Array.from(teamTotals.values()).sort(
+        (a, b) => b.cumulative - a.cumulative,
+      )
+
+      overallPieLabels.value = sortedTotals.map((t) => t.name)
+      overallPieData.value = sortedTotals.map((t) => t.cumulative)
+      totalGPOverall.value = sortedTotals.reduce((sum, t) => sum + t.cumulative, 0)
     } else {
       totalGPOverall.value = 0
     }
