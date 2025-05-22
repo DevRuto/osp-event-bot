@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import axios from 'axios'
+import TopEarners from '@/components/TopEarners.vue'
+import TeamCard from '@/components/TeamCard.vue'
 
 const teams = ref([])
 const globalTotal = ref(0)
@@ -125,45 +127,7 @@ function getTeamName(playerId) {
           <h2 class="text-xl font-bold mb-4 text-purple-700 dark:text-purple-400">
             Biggest Spooners
           </h2>
-          <ol class="space-y-3">
-            <li
-              v-for="(player, index) in topEarners"
-              :key="player.id"
-              class="text-sm text-gray-800 dark:text-gray-200"
-            >
-              <div class="flex items-center justify-between">
-                <div class="flex min-w-[3rem] flex-col text-blue-800 dark:text-blue-300">
-                  <div class="flex items-baseline font-bold">
-                    <span class="mr-1">{{ index + 1 }}.</span>
-                    <span>{{ player.rsn.split(',')[0].trim() }}</span>
-                  </div>
-                  <div>
-                    <span
-                      v-for="(part, i) in player.rsn.split(',').slice(1)"
-                      :key="i"
-                      class="block break-words ml-[1rem]"
-                    >
-                      {{ part.trim() }}
-                    </span>
-                  </div>
-                  <div
-                    v-if="player.discriminator && player.discriminator !== '0'"
-                    class="text-gray-500 dark:text-gray-400 font-normal ml-[1.6rem]"
-                  >
-                    #{{ player.discriminator }}
-                  </div>
-                  <div class="text-xs text-gray-600 dark:text-gray-400 italic ml-[1.6rem]">
-                    {{ getTeamName(player.id) }}
-                  </div>
-                </div>
-                <div
-                  class="font-semibold text-green-600 dark:text-green-400 text-sm whitespace-nowrap"
-                >
-                  {{ formatNumber(player.submissionTotal) }} GP
-                </div>
-              </div>
-            </li>
-          </ol>
+          <TopEarners :top-earners="topEarners" :get-team-name="getTeamName" />
         </div>
       </div>
 
@@ -175,47 +139,7 @@ function getTeamName(playerId) {
             :key="team.id"
             class="bg-white dark:bg-gray-800 shadow rounded-xl p-5 border border-gray-200 dark:border-gray-700"
           >
-            <h2 class="text-2xl font-semibold mb-3 text-blue-700 dark:text-blue-400">
-              {{ team.name }}
-            </h2>
-            <div class="text-gray-700 dark:text-gray-300 mb-4">
-              Team Total:
-              <span class="font-bold text-green-600 dark:text-green-400">
-                {{ formatNumber(team.teamTotal) }} GP
-              </span>
-            </div>
-
-            <ul class="space-y-2">
-              <li v-for="member in team.members" :key="member.id" class="flex items-center gap-3">
-                <img
-                  v-if="member.avatar"
-                  :src="member.avatar"
-                  alt="avatar"
-                  class="w-10 h-10 rounded-full border border-gray-300 dark:border-gray-600"
-                />
-                <div
-                  v-else
-                  class="w-10 h-10 flex items-center justify-center bg-gray-300 dark:bg-gray-600 text-lg font-bold rounded-full"
-                >
-                  {{ member.rsn.charAt(0).toUpperCase() }}
-                </div>
-                <div class="flex-1">
-                  <div class="font-semibold text-lg text-blue-800 dark:text-blue-300">
-                    {{ member.rsn
-                    }}<span
-                      v-if="member.discriminator && member.discriminator !== '0'"
-                      class="text-gray-500 dark:text-gray-400"
-                      >#{{ member.discriminator }}</span
-                    >
-                  </div>
-                  <div
-                    class="mt-1 inline-block px-2 py-1 text-sm font-semibold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900 rounded-md"
-                  >
-                    {{ formatNumber(member.submissionTotal) }} GP
-                  </div>
-                </div>
-              </li>
-            </ul>
+            <TeamCard :team="team" />
           </div>
         </div>
       </div>
