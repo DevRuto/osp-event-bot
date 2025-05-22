@@ -79,7 +79,7 @@ onMounted(async () => {
       </span>
     </div>
 
-    <div class="mb-12" v-if="overallPieLabels.length && overallPieData.length">
+    <div class="mb-12" v-if="!loading && overallPieLabels.length && overallPieData.length">
       <h2 class="text-2xl font-bold text-center mb-4">GP Share by Team (Total Event)</h2>
       <div class="w-72 h-72 mx-auto">
         <!-- 18rem = 288px -->
