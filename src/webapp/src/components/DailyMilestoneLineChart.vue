@@ -24,7 +24,7 @@ const chart = computed(() => {
       label: team.teamName,
       data: cumulativeData,
       borderColor: getTeamColor(team.teamName),
-      backgroundColor: 'transparent',
+      backgroundColor: getTeamColor(team.teamName),
       tension: 0.3,
     })
   }

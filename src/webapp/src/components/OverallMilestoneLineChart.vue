@@ -19,7 +19,7 @@ function buildOverallHourlyDatasets(milestones) {
           label: team.teamName,
           data: [],
           borderColor: getTeamColor(team.teamName),
-          backgroundColor: 'transparent',
+          backgroundColor: getTeamColor(team.teamName),
           tension: 0.3,
           _cumulative: 0, // track cumulative per team
         })
