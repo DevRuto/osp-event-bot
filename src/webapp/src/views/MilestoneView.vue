@@ -96,7 +96,7 @@ onMounted(async () => {
         :key="dayData.day"
         class="mb-10 p-6 border border-gray-300 dark:border-gray-700 rounded-lg shadow-md bg-white dark:bg-gray-800"
       >
-        <DayMilestone :day-milestone="dayData" :format-number="formatNumber" />
+        <DayMilestone :day-milestone="dayData" />
       </div>
     </div>
   </div>
