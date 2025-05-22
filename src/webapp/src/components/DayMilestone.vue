@@ -12,23 +12,23 @@ defineProps({
 function formatNumber(value) {
   return value.toLocaleString()
 }
+
+function createDayString(day) {
+  const eventStart = new Date('2025-05-16T16:00:00Z') // 12 PM EST on May 16 (adjust if needed)
+  const currentDayDate = new Date(eventStart)
+  currentDayDate.setUTCDate(currentDayDate.getUTCDate() + day)
+  const weekday = currentDayDate.toLocaleDateString(undefined, { weekday: 'long' })
+  const monthDay = currentDayDate.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+  })
+  return `Day ${day + 1} – ${weekday}, ${monthDay}`
+}
 </script>
 
 <template>
   <h2 class="text-2xl font-semibold mb-4 text-center">
-    {{
-      (() => {
-        const eventStart = new Date('2025-05-16T16:00:00Z') // 12 PM EST on May 16 (adjust if needed)
-        const currentDayDate = new Date(eventStart)
-        currentDayDate.setUTCDate(currentDayDate.getUTCDate() + dayMilestone.day)
-        const weekday = currentDayDate.toLocaleDateString(undefined, { weekday: 'long' })
-        const monthDay = currentDayDate.toLocaleDateString(undefined, {
-          month: 'short',
-          day: 'numeric',
-        })
-        return `Day ${dayMilestone.day + 1} – ${weekday}, ${monthDay}`
-      })()
-    }}
+    {{ createDayString(dayMilestone.day) }}
   </h2>
 
   <div class="flex flex-col lg:flex-row gap-6">

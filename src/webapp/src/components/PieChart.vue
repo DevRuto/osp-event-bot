@@ -2,6 +2,7 @@
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
+import { getTeamColor } from '@/utils/colors.js'
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement)
 
@@ -14,25 +15,13 @@ const chartReady = computed(() => {
   return props.labels?.length && props.data?.length
 })
 
-// Manual color assignment for each team
-const teamColorsMap = {
-  'Team Apple': '#E53935',
-  'Team Orange': '#FF9800',
-  'Team Pear': '#8BC34A',
-  'Team Lemon': '#FFEB3B',
-}
-
-function getColorForTeam(teamName) {
-  return teamColorsMap[teamName] || '#888'
-}
-
 const chartData = {
   labels: props.labels,
   datasets: [
     {
       label: 'GP',
       data: props.data,
-      backgroundColor: props.labels.map(getColorForTeam),
+      backgroundColor: props.labels.map(getTeamColor),
       borderWidth: 1,
     },
   ],

@@ -13,40 +13,43 @@ function getDayBucket(createdAt) {
   return Math.floor(diffMs / msPerDay);
 }
 
+function getHourBucket(date) {
+  const msPerHour = 60 * 60 * 1000;
+  return Math.floor((new Date(date) - EVENT_START) / msPerHour);
+}
+
 router.get('/milestones', async (_, res) => {
   try {
     const submissions = await SubmissionService.getApprovedSubmissions();
 
-    // Map to store: dayBucket => teamId => total
-    const dayTeamMap = new Map();
-    // Map to store cumulative totals per team
-    const cumulativeTeamTotals = new Map();
+    const dayTeamMap = new Map(); // day => teamId => { teamName, dailyTotal }
+    const hourlyTeamMap = new Map(); // hour => teamId => hourlyTotal
+    const cumulativeTeamTotals = new Map(); // teamId => cumulative
     let cumulativeOverall = 0;
 
     for (const sub of submissions) {
       const dayBucket = getDayBucket(sub.createdAt);
+      const hourBucket = getHourBucket(sub.createdAt);
       const teamId = sub.team.id;
       const teamName = sub.team.name;
       const valueNum = Number(sub.value) || 0;
 
+      // Daily totals
       if (!dayTeamMap.has(dayBucket)) {
         dayTeamMap.set(dayBucket, new Map());
       }
-
       const teamMap = dayTeamMap.get(dayBucket);
-
-      if (teamMap.has(teamId)) {
-        const existing = teamMap.get(teamId);
-        teamMap.set(teamId, {
-          teamName,
-          dailyTotal: existing.dailyTotal + valueNum,
-        });
-      } else {
-        teamMap.set(teamId, {
-          teamName,
-          dailyTotal: valueNum,
-        });
+      if (!teamMap.has(teamId)) {
+        teamMap.set(teamId, { teamName, dailyTotal: 0 });
       }
+      teamMap.get(teamId).dailyTotal += valueNum;
+
+      // Hourly totals
+      if (!hourlyTeamMap.has(hourBucket)) {
+        hourlyTeamMap.set(hourBucket, new Map());
+      }
+      const hourTeamMap = hourlyTeamMap.get(hourBucket);
+      hourTeamMap.set(teamId, (hourTeamMap.get(teamId) || 0) + valueNum);
     }
 
     // Sort days ascending
@@ -62,11 +65,20 @@ router.get('/milestones', async (_, res) => {
 
         dayTotal += dailyTotal;
 
+        // Hourly breakdown for this day
+        const startHour = dayIndex * 24;
+        const hourlyBreakdown = Array.from({ length: 24 }, (_, h) => {
+          const hourIndex = startHour + h;
+          const hourMap = hourlyTeamMap.get(hourIndex);
+          return hourMap?.get(teamId) || 0;
+        });
+
         return {
           teamId,
           teamName,
           dailyTotal,
           cumulativeTotal,
+          hourlyBreakdown,
         };
       });
 

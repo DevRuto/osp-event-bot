@@ -29,6 +29,11 @@ const router = createRouter({
       name: 'milestones',
       component: () => import('../views/MilestoneView.vue'),
     },
+    {
+      path: '/graphs',
+      name: 'graphs',
+      component: () => import('../views/GraphsView.vue'),
+    },
   ],
 })
 
