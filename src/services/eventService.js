@@ -265,6 +265,28 @@ export class EventService {
     }
   }
 
+  // Delete a user from the active event
+  static async unregisterUserFromEvent(discordId) {
+    try {
+      const activeEvent = await this.getActiveEvent();
+      if (!activeEvent) {
+        throw new Error('No active event found');
+      }
+      const participant = await prisma.eventParticipant.delete({
+        where: {
+          userId_eventId: {
+            userId: discordId,
+            eventId: activeEvent.id,
+          },
+        },
+      });
+      return participant;
+    } catch (error) {
+      logger.error(`Error unregistering user ${discordId} from event:`, error);
+      throw error;
+    }
+  }
+
   /**
    * Update user's RSN in the active event
    * @param {String} discordId - The Discord ID of the user

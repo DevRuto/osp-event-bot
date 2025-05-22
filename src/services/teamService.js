@@ -227,6 +227,20 @@ export class TeamService {
     }
   }
 
+  static async removeMemberFromTeam(teamId, userId) {
+    try {
+      await prisma.teamMember.deleteMany({
+        where: {
+          teamId,
+          userId,
+        },
+      });
+    } catch (error) {
+      logger.error('Error removing member from team', error);
+      throw error;
+    }
+  }
+
   /**
    * Remove member from all teams
    * @param {String} userId - The ID of the user
