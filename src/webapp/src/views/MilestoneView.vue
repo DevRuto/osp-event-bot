@@ -98,13 +98,15 @@ onMounted(async () => {
         <h2 class="text-2xl font-semibold mb-4 text-center">
           {{
             (() => {
-              const [year, month, day] = dayData.day.split('-')
-              const date = new Date(year, month - 1, day)
-              return date.toLocaleDateString(undefined, {
-                weekday: 'long',
+              const eventStart = new Date('2025-05-16T16:00:00Z') // 12 PM EST on May 16 (adjust if needed)
+              const currentDayDate = new Date(eventStart)
+              currentDayDate.setUTCDate(currentDayDate.getUTCDate() + dayData.day)
+              const weekday = currentDayDate.toLocaleDateString(undefined, { weekday: 'long' })
+              const monthDay = currentDayDate.toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
               })
+              return `Day ${dayData.day + 1} – ${weekday}, ${monthDay}`
             })()
           }}
         </h2>
