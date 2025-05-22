@@ -1,10 +1,11 @@
 <script setup>
 import { Pie } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js'
+import ChartDataLabels from 'chartjs-plugin-datalabels'
 import { ref, onMounted, onBeforeUnmount, watch, nextTick, computed } from 'vue'
 import { getTeamColor } from '@/utils/colors.js'
 
-ChartJS.register(Title, Tooltip, Legend, ArcElement)
+ChartJS.register(Title, Tooltip, Legend, ArcElement, ChartDataLabels)
 
 const props = defineProps({
   labels: Array,
@@ -33,6 +34,26 @@ const chartOptions = {
   plugins: {
     legend: {
       position: 'bottom',
+    },
+    datalabels: {
+      color: '#000',
+      formatter: (value, context) => {
+        const data = context.chart.data.datasets[0].data
+        const total = data.reduce((a, b) => a + b, 0)
+        const percentage = ((value / total) * 100).toFixed(1)
+        return `${percentage}%`
+      },
+    },
+    tooltip: {
+      callbacks: {
+        label: function (context) {
+          const label = context.label || ''
+          const value = context.parsed
+          const total = context.chart._metasets[0].total
+          const percentage = ((value / total) * 100).toFixed(1)
+          return `${label}: ${value.toLocaleString()} GP (${percentage}%)`
+        },
+      },
     },
   },
 }
