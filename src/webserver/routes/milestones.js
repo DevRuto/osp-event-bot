@@ -5,14 +5,17 @@ import logger from '#utils/logger.js';
 const router = Router();
 
 function getAdjustedDayString(date) {
-  const adjustedDate = new Date(date.getTime());
+  const utc = new Date(date);
+  const hours = utc.getUTCHours();
 
-  // Subtract 4 hours to shift the "day boundary" to noon EDT (16:00 UTC)
-  adjustedDate.setUTCHours(adjustedDate.getUTCHours() - 4);
+  // If before 4:00 UTC, count it as the previous "day"
+  if (hours < 4) {
+    utc.setUTCDate(utc.getUTCDate() - 1);
+  }
 
-  return `${adjustedDate.getUTCFullYear()}-${(adjustedDate.getUTCMonth() + 1)
+  return `${utc.getUTCFullYear()}-${(utc.getUTCMonth() + 1)
     .toString()
-    .padStart(2, '0')}-${adjustedDate.getUTCDate().toString().padStart(2, '0')}`;
+    .padStart(2, '0')}-${utc.getUTCDate().toString().padStart(2, '0')}`;
 }
 
 router.get('/milestones', async (_, res) => {
