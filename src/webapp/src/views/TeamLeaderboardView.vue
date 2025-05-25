@@ -38,6 +38,10 @@ const timeRemaining = computed(() => {
   return `Ends in ${days}d ${hours}h ${minutes}m ${seconds}s`
 })
 
+const eventEnded = computed(() => {
+  return now.value >= eventEndDate.value
+})
+
 const eventProgress = computed(() => {
   const total = eventEndDate.value.getTime() - eventStartDate.value.getTime()
   const elapsed = now.value.getTime() - eventStartDate.value.getTime()
@@ -97,6 +101,7 @@ function getTeamName(playerId) {
 
     <div
       class="border border-yellow-400 dark:border-yellow-300 rounded-xl p-6 bg-white dark:bg-gray-800 shadow-sm mb-8 max-w-2xl mx-auto"
+      v-if="!eventEnded"
     >
       <div class="text-center">
         <div class="text-2xl font-semibold text-gray-800 dark:text-gray-100">
@@ -118,6 +123,9 @@ function getTeamName(playerId) {
           {{ eventProgress.toFixed(1) }}% of the event completed
         </div>
       </div>
+    </div>
+    <div v-else class="text-center text-red-500 font-semibold mb-6">
+      The event has ended. Thank you for participating!
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
