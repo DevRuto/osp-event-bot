@@ -34,6 +34,11 @@ const router = createRouter({
       name: 'graphs',
       component: () => import('../views/GraphsView.vue'),
     },
+    {
+      path: '/player-breakdown',
+      name: 'player-breakdown',
+      component: () => import('../views/PlayerBreakdownView.vue'),
+    },
   ],
 })
 

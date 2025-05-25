@@ -10,6 +10,10 @@ ChartJS.register(Title, Tooltip, Legend, ArcElement)
 const props = defineProps({
   labels: Array,
   data: Array,
+  height: {
+    type: Number,
+    required: false,
+  },
 })
 
 const chartReady = computed(() => {
@@ -34,6 +38,27 @@ const chartOptions = {
   plugins: {
     legend: {
       position: 'bottom',
+      onHover: (event, legendItem, legend) => {
+        const chart = legend.chart
+        const datasetIndex = legendItem.datasetIndex || 0
+        const index = legendItem.index
+
+        chart.setActiveElements([{ datasetIndex, index }])
+        chart.tooltip.setActiveElements([{ datasetIndex, index }], { x: 0, y: 0 })
+        chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+          colors[index] = index === legendItem.index || color.length === 9 ? color : color + '4D'
+        })
+        chart.update()
+      },
+      onLeave: (event, legendItem, legend) => {
+        const chart = legend.chart
+        chart.setActiveElements([])
+        chart.tooltip.setActiveElements([], { x: 0, y: 0 })
+        chart.data.datasets[0].backgroundColor.forEach((color, index, colors) => {
+          colors[index] = color.length === 9 ? color.slice(0, -2) : color
+        })
+        chart.update()
+      },
     },
     datalabels: {
       color: '#000',
@@ -104,7 +129,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div v-if="chartReady">
+  <div v-if="chartReady" :class="[height ? `h-[${height}px]` : '']">
     <Pie :data="chartData" :options="chartOptions" ref="pieChartRef" :plugins="[ChartDataLabels]" />
   </div>
 </template>
