@@ -69,30 +69,30 @@ th {
 </style>
 
 <template>
-  <div class="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6">
-    <div class="overflow-x-auto">
-      <table class="min-w-full table-auto border-collapse border border-gray-700 text-sm">
+  <div class="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6 text-base">
+    <div class="overflow-x-auto max-w-screen-lg mx-auto">
+      <table class="w-full table-auto border-collapse border border-gray-700 text-base">
         <thead>
           <tr class="bg-gray-800">
-            <th class="p-2 sm:p-3 cursor-pointer w-36" @click="sortBy('rsn')">
+            <th class="p-2 sm:p-3 cursor-pointer w-32" @click="sortBy('rsn')">
               <div class="flex items-center gap-1">
                 RSN
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-20 text-right" @click="sortBy('ehp')">
+            <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('ehp')">
               <div class="flex items-center justify-end gap-1">
                 EHP
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-20 text-right" @click="sortBy('ehb')">
+            <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('ehb')">
               <div class="flex items-center justify-end gap-1">
                 EHB
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-36 text-right" @click="sortBy('totalXp')">
+            <th class="p-2 sm:p-3 cursor-pointer w-32 text-right" @click="sortBy('totalXp')">
               <div class="flex items-center justify-end gap-1">
                 Total XP Gained
                 <span class="text-xs">⇅</span>
@@ -141,7 +141,7 @@ th {
                     </button>
                   </div>
                   <div v-if="activeTab[rsn] === 'skills'">
-                    <table class="w-full text-xs border border-gray-600">
+                    <table class="w-full text-sm border border-gray-600">
                       <thead>
                         <tr class="bg-gray-700">
                           <th class="p-2 text-left">Skill</th>
@@ -163,7 +163,7 @@ th {
                     </table>
                   </div>
                   <div v-else-if="activeTab[rsn] === 'bosses'">
-                    <table class="w-full text-xs border border-gray-600">
+                    <table class="w-full text-sm border border-gray-600">
                       <thead>
                         <tr class="bg-gray-700">
                           <th class="p-2 text-left">Boss</th>
@@ -182,12 +182,12 @@ th {
                         >
                           <td class="p-2 capitalize">{{ bossName }}</td>
                           <td class="p-2 text-right">
-                            {{ player.start.bosses?.[bossName]?.kills ?? 0 }}
+                            {{ formatNumber(player.start.bosses?.[bossName]?.kills ?? 0) }}
                           </td>
                           <td class="p-2 text-right">
-                            {{ player.end.bosses?.[bossName]?.kills ?? 0 }}
+                            {{ formatNumber(player.end.bosses?.[bossName]?.kills ?? 0) }}
                           </td>
-                          <td class="p-2 text-right">{{ bossData.kills }}</td>
+                          <td class="p-2 text-right">{{ formatNumber(bossData.kills) }}</td>
                         </tr>
                       </tbody>
                     </table>
