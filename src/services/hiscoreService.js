@@ -87,8 +87,8 @@ const alts = {
 };
 
 async function calculateUser(rsn) {
-  const start = startData[rsn] || { skills: {}, minigames: {}, bosses: {} };
   const end = endData[rsn] || endData[alts[rsn]] || null;
+  const start = startData[rsn] || end || { skills: {}, minigames: {}, bosses: {} };
   if (!end) {
     return null;
   }
