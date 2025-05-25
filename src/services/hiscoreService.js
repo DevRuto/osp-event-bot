@@ -107,6 +107,7 @@ async function calculateUser(rsn) {
     rsn,
     profile,
     teamName: team.name,
+    start,
     end,
     diff,
     ehb: await calculateEhb(accountType, diff.bosses),
