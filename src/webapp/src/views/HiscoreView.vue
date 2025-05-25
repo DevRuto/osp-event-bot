@@ -119,8 +119,36 @@ th {
               @click="toggleExpanded(rsn)"
             >
               <td class="p-2 sm:p-3 font-semibold flex items-center gap-2">
-                <span v-if="expandedRows[rsn]" class="text-xs">▼</span>
-                <span v-else class="text-xs">▶</span>
+                <svg
+                  v-if="expandedRows[rsn]"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+                <svg
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
                 <span
                   class="w-3 h-3 rounded-full"
                   :style="{ backgroundColor: getTeamColor(player.teamName) }"
