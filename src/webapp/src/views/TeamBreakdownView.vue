@@ -85,10 +85,12 @@ const formatGP = (value) => {
                 <p class="text-sm text-gray-500 dark:text-gray-400">
                   Discord: {{ member.username }}
                 </p>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Duo: {{ member.duo }}</p>
-              </div>
-              <div class="ml-auto text-right font-medium text-green-700 dark:text-green-400">
-                {{ formatGP(member.submissionTotal) }}
+                <p v-if="member.duo" class="text-sm text-gray-500 dark:text-gray-400">
+                  Duo: {{ member.duo }}
+                </p>
+                <div class="ml-auto font-medium text-green-700 dark:text-green-400">
+                  {{ formatGP(member.submissionTotal) }}
+                </div>
               </div>
             </div>
           </div>
