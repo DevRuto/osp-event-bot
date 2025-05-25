@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { getTeamColor } from '@/utils/colors.js'
 
 const rawData = ref({})
 const sortKey = ref('ehp')
@@ -24,15 +25,20 @@ const sortedData = computed(() => {
       const aVal =
         sortKey.value === 'rsn'
           ? a.rsn
-          : sortKey.value === 'totalXp'
-            ? totalXp(a.diff.skills)
-            : (a[sortKey.value]?.total ?? 0)
+          : sortKey.value === 'team'
+            ? (a.teamName || '').toLowerCase()
+            : sortKey.value === 'totalXp'
+              ? totalXp(a.diff.skills)
+              : (a[sortKey.value]?.total ?? 0)
+
       const bVal =
         sortKey.value === 'rsn'
           ? b.rsn
-          : sortKey.value === 'totalXp'
-            ? totalXp(b.diff.skills)
-            : (b[sortKey.value]?.total ?? 0)
+          : sortKey.value === 'team'
+            ? (b.teamName || '').toLowerCase()
+            : sortKey.value === 'totalXp'
+              ? totalXp(b.diff.skills)
+              : (b[sortKey.value]?.total ?? 0)
 
       return (sortAsc.value ? 1 : -1) * (aVal > bVal ? 1 : aVal < bVal ? -1 : 0)
     }),
@@ -80,6 +86,12 @@ th {
                 <span class="text-xs">⇅</span>
               </div>
             </th>
+            <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('team')">
+              <div class="flex items-center justify-end gap-1">
+                Team
+                <span class="text-xs">⇅</span>
+              </div>
+            </th>
             <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('ehp')">
               <div class="flex items-center justify-end gap-1">
                 EHP
@@ -109,14 +121,20 @@ th {
               <td class="p-2 sm:p-3 font-semibold flex items-center gap-2">
                 <span v-if="expandedRows[rsn]" class="text-xs">▼</span>
                 <span v-else class="text-xs">▶</span>
+                <span
+                  class="w-3 h-3 rounded-full"
+                  :style="{ backgroundColor: getTeamColor(player.teamName) }"
+                  title="Team color"
+                ></span>
                 <img
                   v-if="player.profile?.user?.avatar"
                   :src="player.profile.user.avatar"
                   alt="avatar"
                   class="w-5 h-5 rounded-full"
                 />
-                {{ rsn }}
+                <span>{{ rsn }}</span>
               </td>
+              <td class="p-2 sm:p-3 text-right">{{ player.teamName }}</td>
               <td class="p-2 sm:p-3 text-right">{{ player.ehp?.total ?? 0 }}</td>
               <td class="p-2 sm:p-3 text-right">{{ player.ehb?.total ?? 0 }}</td>
               <td class="p-2 sm:p-3 text-right">{{ formatNumber(totalXp(player.diff.skills)) }}</td>

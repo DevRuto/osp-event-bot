@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { EventService } from './eventService.js';
+import { TeamService } from './teamService.js';
 import { calculateEhb, calculateEhp } from '#utils/efficiency.js';
 
 const HISCORE_DIR = './hiscore_logs';
@@ -100,11 +101,12 @@ async function calculateUser(rsn) {
   };
 
   const accountType = getAccountType(rsn);
-
+  const profile = await EventService.getUserDetailsByRsn(rsn);
+  const team = await TeamService.getCurrentTeam(profile.userId);
   return {
     rsn,
-    profile: await EventService.getUserDetailsByRsn(rsn),
-    start,
+    profile,
+    teamName: team.name,
     end,
     diff,
     ehb: await calculateEhb(accountType, diff.bosses),
