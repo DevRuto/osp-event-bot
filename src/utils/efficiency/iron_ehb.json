@@ -60,5 +60,6 @@
   { "boss": "venenatis", "rate": 33 },
   { "boss": "vetion", "rate": 35 },
   { "boss": "vorkath", "rate": 33 },
+  { "boss": "yama", "rate": 20 },
   { "boss": "zulrah", "rate": 39 }
 ]
