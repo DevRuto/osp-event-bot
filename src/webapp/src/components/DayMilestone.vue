@@ -1,6 +1,5 @@
 <script setup>
 import PieChart from '@/components/PieChart.vue'
-import { defineProps } from 'vue'
 
 defineProps({
   dayMilestone: {

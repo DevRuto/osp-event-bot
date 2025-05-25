@@ -1,6 +1,6 @@
 <script setup>
 import LineChart from './LineChart.vue'
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import { getTeamColor } from '@/utils/colors.js'
 
 const props = defineProps({
