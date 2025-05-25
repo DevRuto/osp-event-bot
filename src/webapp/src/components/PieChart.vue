@@ -126,6 +126,25 @@ watch(isDark, () => {
 onBeforeUnmount(() => {
   window.__darkModeObserver?.disconnect()
 })
+
+watch(
+  () => [props.labels, props.data],
+  ([newLabels, newData]) => {
+    if (pieChartRef.value?.chart) {
+      pieChartRef.value.chart.data.labels = newLabels
+      pieChartRef.value.chart.data.datasets = [
+        {
+          label: 'GP',
+          data: newData,
+          backgroundColor: props.labels.map(getTeamColor),
+          borderWidth: 1,
+        },
+      ]
+      pieChartRef.value.chart.update()
+    }
+  },
+  { deep: true },
+)
 </script>
 
 <template>
