@@ -13,18 +13,22 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6 text-base">
-    <div class="mb-4 flex gap-4">
+  <div class="max-w-screen-lg mx-auto space-y-6">
+    <div class="mb-4 flex gap-2 bg-gray-700 p-1 rounded-full w-max">
       <button
-        class="px-4 py-2 rounded bg-gray-800 hover:bg-gray-700"
-        :class="{ 'bg-gray-700': activeTab === 'players' }"
+        class="px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-200"
+        :class="
+          activeTab === 'players' ? 'bg-white text-gray-900' : 'text-gray-300 hover:bg-gray-600'
+        "
         @click="activeTab = 'players'"
       >
         Player Hiscores
       </button>
       <button
-        class="px-4 py-2 rounded bg-gray-800 hover:bg-gray-700"
-        :class="{ 'bg-gray-700': activeTab === 'overall' }"
+        class="px-4 py-1.5 text-sm font-medium rounded-full transition-colors duration-200"
+        :class="
+          activeTab === 'overall' ? 'bg-white text-gray-900' : 'text-gray-300 hover:bg-gray-600'
+        "
         @click="activeTab = 'overall'"
       >
         Overall
