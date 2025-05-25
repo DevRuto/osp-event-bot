@@ -54,10 +54,12 @@ const topEarners = computed(() =>
 onMounted(async () => {
   try {
     const res = await axios.get('/api/leaderboard/teams')
-    teams.value = res.data.map((team) => ({
-      ...team,
-      members: team.members.sort((a, b) => b.submissionTotal - a.submissionTotal),
-    }))
+    teams.value = res.data
+      .map((team) => ({
+        ...team,
+        members: team.members.sort((a, b) => b.submissionTotal - a.submissionTotal),
+      }))
+      .sort((a, b) => b.teamTotal - a.teamTotal)
 
     globalTotal.value = teams.value.reduce((sum, team) => sum + team.teamTotal, 0)
 
