@@ -17,7 +17,7 @@ onMounted(async () => {
     loading.value = true
     const res = await fetch('/api/leaderboard/teams')
     if (!res.ok) throw new Error('Failed to load players data')
-    teams.value = await res.json()
+    teams.value = (await res.json()).sort((a, b) => b.teamTotal - a.teamTotal)
   } catch (error) {
     console.error(error)
   } finally {
