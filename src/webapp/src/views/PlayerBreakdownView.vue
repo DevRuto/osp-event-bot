@@ -31,7 +31,7 @@ onMounted(async () => {
   <div
     class="max-w-7xl mx-auto p-6 mt-10 text-black dark:text-white transition-colors duration-300"
   >
-    <h1 class="text-3xl font-bold text-center mb-8">Player breakdowns</h1>
+    <h1 class="text-3xl font-bold text-center mb-8">Player Breakdowns</h1>
     <div v-if="loading" class="text-center">Loading...</div>
     <div v-else>
       <PieChart

@@ -34,7 +34,7 @@ const formatGP = (value) => {
   <div
     class="max-w-7xl mx-auto p-6 mt-10 text-black dark:text-white transition-colors duration-300"
   >
-    <h1 class="text-3xl font-bold text-center mb-8">Team breakdowns</h1>
+    <h1 class="text-3xl font-bold text-center mb-8">Team Breakdowns</h1>
     <div v-if="loading" class="text-center">Loading...</div>
     <div v-else>
       <div class="flex space-x-2 border-b border-gray-300 dark:border-gray-700 overflow-x-auto">
