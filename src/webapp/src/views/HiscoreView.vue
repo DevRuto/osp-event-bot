@@ -61,7 +61,7 @@ function setActiveTab(rsn, tab) {
 function toggleExpanded(rsn) {
   expandedRows.value[rsn] = !expandedRows.value[rsn]
   if (!activeTab.value[rsn]) {
-    activeTab.value[rsn] = 'skills'
+    activeTab.value[rsn] = 'bosses'
   }
 }
 
@@ -173,17 +173,17 @@ th {
                   <div class="flex space-x-4 mb-2">
                     <button
                       class="px-3 py-1 rounded bg-gray-700 hover:bg-gray-600"
-                      :class="{ 'bg-gray-600': activeTab[rsn] === 'skills' }"
-                      @click.stop="setActiveTab(rsn, 'skills')"
-                    >
-                      Skills
-                    </button>
-                    <button
-                      class="px-3 py-1 rounded bg-gray-700 hover:bg-gray-600"
                       :class="{ 'bg-gray-600': activeTab[rsn] === 'bosses' }"
                       @click.stop="setActiveTab(rsn, 'bosses')"
                     >
                       Bosses
+                    </button>
+                    <button
+                      class="px-3 py-1 rounded bg-gray-700 hover:bg-gray-600"
+                      :class="{ 'bg-gray-600': activeTab[rsn] === 'skills' }"
+                      @click.stop="setActiveTab(rsn, 'skills')"
+                    >
+                      Skills
                     </button>
                   </div>
                   <div v-if="activeTab[rsn] === 'skills'">
