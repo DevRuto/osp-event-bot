@@ -14,11 +14,11 @@ const router = createRouter({
       name: 'participants',
       component: () => import('../views/ParticipantsView.vue'),
     },
-    {
-      path: '/submit',
-      name: 'submit',
-      component: () => import('../views/SubmissionView.vue'),
-    },
+    // {
+    //   path: '/submit',
+    //   name: 'submit',
+    //   component: () => import('../views/SubmissionView.vue'),
+    // },
     {
       path: '/teams',
       name: 'teams',

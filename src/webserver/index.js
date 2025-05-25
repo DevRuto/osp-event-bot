@@ -2,7 +2,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import logger from '#utils/logger.js';
-import SubmissionRoute from './routes/submit.js';
+// import SubmissionRoute from './routes/submit.js';
 import EventRoute from './routes/event.js';
 import ImageRoute from './routes/image.js';
 import TeamLeaderboardRoute from './routes/teams.js';
@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 
 // API routes
-app.use('/api', SubmissionRoute);
+// app.use('/api', SubmissionRoute);
 app.use('/api', EventRoute);
 app.use('/api', ImageRoute);
 app.use('/api', PricesRoute);

@@ -36,7 +36,7 @@ onMounted(() => {
         <RouterLink to="/teams" class="hover:text-gray-300">Teams</RouterLink>
         <RouterLink to="/milestones" class="hover:text-gray-300">Milestones</RouterLink>
         <RouterLink to="/graphs" class="hover:text-gray-300">Graphs</RouterLink>
-        <RouterLink to="/submit" class="hover:text-gray-300">Submit</RouterLink>
+        <!-- <RouterLink to="/submit" class="hover:text-gray-300">Submit</RouterLink> -->
 
         <!-- Theme Toggle Button -->
         <button
