@@ -44,6 +44,11 @@ const router = createRouter({
       name: 'team-breakdown',
       component: () => import('../views/TeamBreakdownView.vue'),
     },
+    {
+      path: '/hiscore',
+      name: 'hiscore',
+      component: () => import('../views/HiscoreView.vue'),
+    },
   ],
 })
 
