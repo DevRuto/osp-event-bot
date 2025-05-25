@@ -1,3 +1,4 @@
 @import 'tailwindcss';
+@source inline("h-[800px]");
 
 @custom-variant dark (&:where(.dark, .dark *));
