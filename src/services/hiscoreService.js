@@ -103,6 +103,7 @@ async function calculateUser(rsn) {
 
   return {
     rsn,
+    profile: await EventService.getUserDetailsByRsn(rsn),
     start,
     end,
     diff,
