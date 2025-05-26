@@ -14,6 +14,7 @@ const sortAsc = ref(false)
 const activeTab = ref({})
 const expandedRows = ref({})
 const selectedTeam = ref('All Teams')
+const selectedBoss = ref('None')
 
 onMounted(() => {
   sortBy('ehb')
@@ -31,6 +32,14 @@ const teams = computed(() => {
   return ['All Teams', ...Array.from(set).sort()]
 })
 
+const allBosses = computed(() => {
+  const set = new Set()
+  Object.values(props.hiscoreData).forEach((player) => {
+    Object.keys(player.diff?.bosses || {}).forEach((boss) => set.add(boss))
+  })
+  return ['None', ...Array.from(set).sort()]
+})
+
 const filteredData = computed(() => {
   if (selectedTeam.value === 'All Teams') return props.hiscoreData
   return Object.fromEntries(
@@ -43,23 +52,24 @@ const filteredData = computed(() => {
 const sortedData = computed(() => {
   return Object.fromEntries(
     Object.entries(filteredData.value).sort(([, a], [, b]) => {
-      const aVal =
-        sortKey.value === 'rsn'
-          ? a.rsn
-          : sortKey.value === 'team'
-            ? (a.teamName || '').toLowerCase()
-            : sortKey.value === 'totalXp'
-              ? totalXp(a.diff.skills)
-              : (a[sortKey.value]?.total ?? 0)
+      let aVal, bVal
 
-      const bVal =
-        sortKey.value === 'rsn'
-          ? b.rsn
-          : sortKey.value === 'team'
-            ? (b.teamName || '').toLowerCase()
-            : sortKey.value === 'totalXp'
-              ? totalXp(b.diff.skills)
-              : (b[sortKey.value]?.total ?? 0)
+      if (selectedBoss.value !== 'None') {
+        aVal = a.diff?.bosses?.[selectedBoss.value]?.kills ?? 0
+        bVal = b.diff?.bosses?.[selectedBoss.value]?.kills ?? 0
+      } else if (sortKey.value === 'rsn') {
+        aVal = a.rsn
+        bVal = b.rsn
+      } else if (sortKey.value === 'team') {
+        aVal = (a.teamName || '').toLowerCase()
+        bVal = (b.teamName || '').toLowerCase()
+      } else if (sortKey.value === 'totalXp') {
+        aVal = totalXp(a.diff.skills)
+        bVal = totalXp(b.diff.skills)
+      } else {
+        aVal = a[sortKey.value]?.total ?? 0
+        bVal = b[sortKey.value]?.total ?? 0
+      }
 
       return (sortAsc.value ? 1 : -1) * (aVal > bVal ? 1 : aVal < bVal ? -1 : 0)
     }),
@@ -97,15 +107,27 @@ th {
 
 <template>
   <div class="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6 text-base">
-    <div class="max-w-screen-lg mx-auto mb-4">
-      <label for="teamFilter" class="mr-2 font-semibold">Filter by Team:</label>
-      <select
-        id="teamFilter"
-        v-model="selectedTeam"
-        class="bg-gray-800 text-gray-100 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        <option v-for="team in teams" :key="team" :value="team">{{ team }}</option>
-      </select>
+    <div class="max-w-screen-lg mx-auto mb-4 flex flex-wrap gap-4">
+      <div>
+        <label for="teamFilter" class="mr-2 font-semibold">Filter by Team:</label>
+        <select
+          id="teamFilter"
+          v-model="selectedTeam"
+          class="bg-gray-800 text-gray-100 rounded px-3 py-1"
+        >
+          <option v-for="team in teams" :key="team" :value="team">{{ team }}</option>
+        </select>
+      </div>
+      <div>
+        <label for="bossFilter" class="mr-2 font-semibold">Filter by Boss:</label>
+        <select
+          id="bossFilter"
+          v-model="selectedBoss"
+          class="bg-gray-800 text-gray-100 rounded px-3 py-1"
+        >
+          <option v-for="boss in allBosses" :key="boss" :value="boss">{{ boss }}</option>
+        </select>
+      </div>
     </div>
     <div class="overflow-x-auto max-w-screen-lg mx-auto">
       <table class="w-full table-auto border-collapse border border-gray-700 text-base">
@@ -123,23 +145,38 @@ th {
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('ehp')">
+            <th
+              v-if="selectedBoss === 'None'"
+              class="p-2 sm:p-3 cursor-pointer w-16 text-right"
+              @click="sortBy('ehp')"
+            >
               <div class="flex items-center justify-end gap-1">
                 EHP
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-16 text-right" @click="sortBy('ehb')">
+            <th
+              v-if="selectedBoss === 'None'"
+              class="p-2 sm:p-3 cursor-pointer w-16 text-right"
+              @click="sortBy('ehb')"
+            >
               <div class="flex items-center justify-end gap-1">
                 EHB
                 <span class="text-xs">⇅</span>
               </div>
             </th>
-            <th class="p-2 sm:p-3 cursor-pointer w-32 text-right" @click="sortBy('totalXp')">
+            <th
+              v-if="selectedBoss === 'None'"
+              class="p-2 sm:p-3 cursor-pointer w-32 text-right"
+              @click="sortBy('totalXp')"
+            >
               <div class="flex items-center justify-end gap-1">
                 Total XP Gained
                 <span class="text-xs">⇅</span>
               </div>
+            </th>
+            <th v-else class="p-2 sm:p-3 text-right w-36">
+              <div class="flex items-center justify-end gap-1">{{ selectedBoss }} Kills</div>
             </th>
           </tr>
         </thead>
@@ -194,9 +231,18 @@ th {
                 <span>{{ rsn }}</span>
               </td>
               <td class="p-2 sm:p-3 text-right">{{ player.teamName }}</td>
-              <td class="p-2 sm:p-3 text-right">{{ player.ehp?.total ?? 0 }}</td>
-              <td class="p-2 sm:p-3 text-right">{{ player.ehb?.total ?? 0 }}</td>
-              <td class="p-2 sm:p-3 text-right">{{ formatNumber(totalXp(player.diff.skills)) }}</td>
+              <td v-if="selectedBoss === 'None'" class="p-2 sm:p-3 text-right">
+                {{ player.ehp?.total ?? 0 }}
+              </td>
+              <td v-if="selectedBoss === 'None'" class="p-2 sm:p-3 text-right">
+                {{ player.ehb?.total ?? 0 }}
+              </td>
+              <td v-if="selectedBoss === 'None'" class="p-2 sm:p-3 text-right">
+                {{ formatNumber(totalXp(player.diff.skills)) }}
+              </td>
+              <td v-else class="p-2 sm:p-3 text-right">
+                {{ player.diff?.bosses?.[selectedBoss]?.kills ?? 0 }}
+              </td>
             </tr>
             <tr v-if="expandedRows[rsn]" class="border-b border-gray-700 bg-gray-800">
               <td colspan="4" class="p-3">
