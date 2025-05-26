@@ -13,6 +13,7 @@ const sortKey = ref('ehp')
 const sortAsc = ref(false)
 const activeTab = ref({})
 const expandedRows = ref({})
+const selectedTeam = ref('All Teams')
 
 onMounted(() => {
   sortBy('ehb')
@@ -22,9 +23,26 @@ function totalXp(skills) {
   return Object.values(skills || {}).reduce((sum, skill) => sum + (skill.xp || 0), 0)
 }
 
+const teams = computed(() => {
+  const set = new Set()
+  Object.values(props.hiscoreData).forEach((player) => {
+    if (player.teamName) set.add(player.teamName)
+  })
+  return ['All Teams', ...Array.from(set).sort()]
+})
+
+const filteredData = computed(() => {
+  if (selectedTeam.value === 'All Teams') return props.hiscoreData
+  return Object.fromEntries(
+    Object.entries(props.hiscoreData).filter(
+      ([, player]) => player.teamName === selectedTeam.value,
+    ),
+  )
+})
+
 const sortedData = computed(() => {
   return Object.fromEntries(
-    Object.entries(props.hiscoreData).sort(([, a], [, b]) => {
+    Object.entries(filteredData.value).sort(([, a], [, b]) => {
       const aVal =
         sortKey.value === 'rsn'
           ? a.rsn
@@ -79,6 +97,16 @@ th {
 
 <template>
   <div class="min-h-screen bg-gray-900 text-gray-100 p-4 sm:p-6 text-base">
+    <div class="max-w-screen-lg mx-auto mb-4">
+      <label for="teamFilter" class="mr-2 font-semibold">Filter by Team:</label>
+      <select
+        id="teamFilter"
+        v-model="selectedTeam"
+        class="bg-gray-800 text-gray-100 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      >
+        <option v-for="team in teams" :key="team" :value="team">{{ team }}</option>
+      </select>
+    </div>
     <div class="overflow-x-auto max-w-screen-lg mx-auto">
       <table class="w-full table-auto border-collapse border border-gray-700 text-base">
         <thead>
