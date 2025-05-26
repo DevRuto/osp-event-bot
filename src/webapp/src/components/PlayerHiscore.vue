@@ -1,6 +1,10 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { getTeamColor } from '@/utils/colors.js'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
 
 const props = defineProps({
   hiscoreData: {
@@ -13,8 +17,8 @@ const sortKey = ref('ehp')
 const sortAsc = ref(false)
 const activeTab = ref({})
 const expandedRows = ref({})
-const selectedTeam = ref('All Teams')
-const selectedBoss = ref('None')
+const selectedTeam = ref(route.query.team || 'All Teams')
+const selectedBoss = ref(route.query.boss || 'None')
 
 onMounted(() => {
   sortBy('ehb')
@@ -97,6 +101,16 @@ function toggleExpanded(rsn) {
 }
 
 const formatNumber = (num) => new Intl.NumberFormat().format(num)
+
+watch([selectedTeam, selectedBoss], ([team, boss]) => {
+  router.replace({
+    query: {
+      ...route.query,
+      ...(team ? { team } : {}),
+      ...(boss ? { boss } : {}),
+    },
+  })
+})
 </script>
 
 <style scoped>
