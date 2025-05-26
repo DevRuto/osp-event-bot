@@ -111,6 +111,13 @@ watch([selectedTeam, selectedBoss], ([team, boss]) => {
     },
   })
 })
+
+const totalBossKills = computed(() => {
+  if (!selectedBoss.value) return 0
+  return Object.values(filteredData.value).reduce((sum, player) => {
+    return sum + (player.diff?.bosses?.[selectedBoss.value]?.kills || 0)
+  }, 0)
+})
 </script>
 
 <style scoped>
@@ -144,6 +151,17 @@ th {
       </div>
     </div>
     <div class="overflow-x-auto max-w-screen-lg mx-auto">
+      <div v-if="selectedBoss" class="max-w-screen-lg mx-auto mb-4 px-2 sm:px-0">
+        <div class="bg-gray-800 text-gray-100 px-4 py-3 rounded shadow text-center">
+          <span class="text-sm sm:text-base">
+            Total kills for <span class="font-semibold capitalize">{{ selectedBoss }}</span
+            >:
+          </span>
+          <div class="text-xl sm:text-2xl font-bold mt-1">
+            {{ formatNumber(totalBossKills) }}
+          </div>
+        </div>
+      </div>
       <table class="w-full table-auto border-collapse border border-gray-700 text-base">
         <thead>
           <tr class="bg-gray-800">
@@ -190,7 +208,9 @@ th {
               </div>
             </th>
             <th v-else class="p-2 sm:p-3 text-right w-36">
-              <div class="flex items-center justify-end gap-1">{{ selectedBoss }} Kills</div>
+              <div class="flex items-center justify-end gap-1">
+                <span class="font-semibold capitalize">{{ selectedBoss }}</span> Kills
+              </div>
             </th>
           </tr>
         </thead>
