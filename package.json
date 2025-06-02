@@ -1,0 +1,26 @@
+{
+  "name": "osp-event-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "imports": {
+    "#*": "./src/*"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.8.2",
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.5.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.1",
+    "prettier": "^3.5.3",
+    "prisma": "^6.8.2"
+  }
+}

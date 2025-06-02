@@ -1,0 +1,21 @@
+{
+  "env": {
+    "node": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended", "plugin:prettier/recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": ["jsdoc"],
+  "rules": {
+    "no-console": "off",
+    "prettier/prettier": "error",
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "no-var": "error",
+    "prefer-const": "error",
+    "jsdoc/no-undefined-types": 1,
+    "no-trailing-spaces": "error"
+  }
+}
