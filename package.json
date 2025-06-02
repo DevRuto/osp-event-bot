@@ -7,9 +7,12 @@
     "#*": "./src/*"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev"
   },
   "dependencies": {
+    "@prisma/adapter-better-sqlite3": "^6.8.2",
     "@prisma/client": "^6.8.2",
     "discord.js": "^14.19.3",
     "dotenv": "^16.5.0",
