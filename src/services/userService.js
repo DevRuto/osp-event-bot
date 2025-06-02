@@ -2,7 +2,7 @@ import prisma from '#utils/prisma.js';
 import logger from '#utils/logger.js';
 
 /**
- * @typedef {import('#prisma/client').DiscordUser} DiscordUser
+ * @typedef {import('#utils/prisma/client').DiscordUser} DiscordUser
  */
 
 export class UserService {

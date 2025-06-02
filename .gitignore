@@ -5,4 +5,4 @@ node_modules/
 .prettierrc.cache
 .vscode
 logs
-src/prisma
+src/utils/prisma/*
