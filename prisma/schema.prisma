@@ -21,4 +21,45 @@ model DiscordUser {
   updatedAt     DateTime @updatedAt
 
   // Relations
+  participantInfo EventParticipant[]
+}
+
+model Event {
+  id          String      @id @default(uuid())
+  name        String
+  description String?
+  startDate   DateTime
+  endDate     DateTime?
+  status      EventStatus @default(PLANNED)
+  active      Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  participants EventParticipant[]
+}
+
+model EventParticipant {
+  userId  String
+  eventId String
+  rsn     String? // Registered in-game name
+  note    String?
+  status  RegistrationStatus @default(REGISTERED)
+  user    DiscordUser        @relation(fields: [userId], references: [id])
+  event   Event              @relation(fields: [eventId], references: [id])
+
+  @@id([userId, eventId])
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  INTERESTED
+  UNPAID
+}
+
+enum EventStatus {
+  PLANNED
+  ONGOING
+  COMPLETED
+  CANCELLED
 }
