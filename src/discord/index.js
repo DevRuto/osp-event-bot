@@ -30,11 +30,15 @@ for await (const commandFile of commandFiles) {
 }
 
 // Register events
-const eventFiles = await fs.opendir(path.join(baseDir, 'events'), { recursive: false });
+const eventFiles = await fs.opendir(path.join(baseDir, 'events'), { recursive: true });
 for await (const eventFile of eventFiles) {
   if (eventFile.isFile() && eventFile.name.endsWith('.js')) {
     const relativeFile = `./${path.relative(baseDir, eventFile.parentPath)}/${eventFile.name}`;
     const event = await import(relativeFile);
+    // Check if the event has the required properties
+    if (!('name' in event) || !('execute' in event)) {
+      continue;
+    }
     if (event.once) {
       logger.info(`Loaded single event: ${event.name} from ${path.normalize(relativeFile)}`);
       client.once(event.name, (...args) => event.execute(...args));
