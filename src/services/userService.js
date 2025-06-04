@@ -1,15 +1,11 @@
 import prisma from '#utils/prisma.js';
 import logger from '#utils/logger.js';
 
-/**
- * @typedef {import('#utils/prisma/client').DiscordUser} DiscordUser
- */
-
 export class UserService {
   /**
    * Sync a Discord member to the database
    * @param {import('discord.js').GuildMember} member - The Discord member to sync
-   * @returns {Promise<DiscordUser>} The synced user
+   * @returns {Promise<import('#utils/prisma/client').DiscordUser>} The synced user
    */
   static async syncUser(member) {
     try {
