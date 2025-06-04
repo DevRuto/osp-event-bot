@@ -42,7 +42,7 @@ export class UserService {
         });
       }
     } catch (error) {
-      logger.error(`Error syncing user ${member.user.tag}: ${error}`);
+      logger.error(error, `Error syncing user ${member.user.tag}`);
       throw error;
     }
   }
@@ -61,7 +61,7 @@ export class UserService {
         await this.syncUser(member);
       }
     } catch (error) {
-      logger.error(`Error syncing guild ${guild.name}: ${error}`);
+      logger.error(error, `Error syncing guild ${guild.name}`);
       throw error;
     }
   }
@@ -79,8 +79,7 @@ export class UserService {
       }
       logger.info('Finished syncing all server members to database');
     } catch (error) {
-      logger.error('Error syncing server members: ' + error);
-      console.error(error);
+      logger.error(error, 'Error syncing server members');
       throw error;
     }
   }
