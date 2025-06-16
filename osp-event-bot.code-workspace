@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "OSP Event Bot",
+    },
+    {
+      "path": "web",
+      "name": "WebApp",
+    },
+  ],
+  "settings": {
+    "eslint.workingDirectories": [
+      { "mode": "auto" },
+      { "directory": "./web", "changeProcessCWD": true },
+    ],
+    "editor.formatOnSave": true,
+    "editor.tabSize": 2,
+  },
+}
